@@ -85,37 +85,39 @@ def discretise_dataset(filename,bins):
 
 ## Lire le fichier contenant les valeurs et les transformer en String
 def readXy(filename):
-	f = open(filename, "r")
-	matrice = f.read().split('\n')
-	y = []
-	X = []
-	matrice = matrice[1:]
-	for i in range(len(matrice)) :
-		tab = matrice[i].split(',')
-		y.append((int)(tab[0]))
-		# X.append(list(np.array(tab[1:]).astype("float32")))
-		X.append(list(np.array(tab[1:]).astype("float32")))
+    f = open(filename, "r")
+    matrice = f.read().split('\n')
+    y = []
+    X = []
+    matrice = matrice[1:]
+    for i in range(len(matrice)) :
+        tab = matrice[i].split(',')
+        y.append((int)(tab[0]))
+        # X.append(list(np.array(tab[1:]).astype("float32")))
+        X.append(list(np.array(tab[1:]).astype("float32")))
 
-	X_1_0 = []
-	for i in range(len(X)) : 
-		# X_1_0.append(list(map(lambda x: 1 if x>0 else x ,X[i])))
-		x_temp = ""
-		for j in range(len(X[i])):
-			if X[i][j] > 0:
-				x_temp += "1"
-			else:
-				x_temp += "0"
-		X_1_0.append(x_temp)
-	return X,X_1_0,y
+    X_1_0 = []
+    for i in range(len(X)) : 
+        # X_1_0.append(list(map(lambda x: 1 if x>0 else x ,X[i])))
+        x_temp = ""
+        for j in range(len(X[i])):
+            if X[i][j] > 0:
+                x_temp += "1"
+            else:
+                x_temp += "0"
+        X_1_0.append(x_temp)
+    return X,X_1_0,y
 def Histogram(X,histname):
-	fig = plt.hist(X)
-	fig = plt.gcf()
-	fig.set_size_inches(18.5, 10.5)
-	plt.grid(axis='y', alpha=0.75)
-	plt.xlabel('Value')
-	plt.ylabel('Frequency')
-	plt.savefig(histname)
-	plt.clf()
+    fig = plt.hist(X)
+    fig = plt.gcf()
+    fig.set_size_inches(18.5, 10.5)
+    plt.grid(axis='y', alpha=0.75)
+    plt.xlabel('Value')
+    plt.ylabel('Frequency')
+    plt.savefig(histname)
+    plt.clf()
+
+#get_directory_layers_from_csv("iris_8_10_8_.csv")
 
 X,X_1_0,y = readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv")
 X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
@@ -123,7 +125,6 @@ X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
 
 Histogram(X_1,"X1.png")
 Histogram(X_0,"X0.png")
-# get_directory_layers_from_csv("makemoons_3_10_10_3_.csv")
 ## exemple d’utilisation 
 df=discretise_dataset('iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv',8)
 df.to_csv("iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv", sep=',', encoding='utf-8',index=False)
