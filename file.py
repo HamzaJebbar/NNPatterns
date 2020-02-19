@@ -150,11 +150,11 @@ def X_to_encrypted_X(X_,encrypted_X_) :
 
 encrypted_X_0 = X_to_encrypted_X(X_0,encrypting_X_0)
 encrypted_X_1 = X_to_encrypted_X(X_1,encrypting_X_1)
-print("encrypted X_0\n",encrypted_X_0)
-print("encrypted_X_1\n",encrypted_X_1)
+# print("encrypted X_0\n",encrypted_X_0)
+# print("encrypted_X_1\n",encrypted_X_1)
 
-Histogram(encrypted_X_1,"X1.png")
-Histogram(encrypted_X_0,"X0.png")
+Histogram(encrypted_X_1,"X1cr.png")
+Histogram(encrypted_X_0,"X0cr.png")
 
 #Histogram(X_1,"X1.png")
 #Histogram(X_0,"X0.png")
