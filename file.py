@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from functions import *
 #get_directory_layers_from_csv("iris_8_10_8_.csv")
 
-X,X_1_0,y = functions.readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",True)
+X,X_1_0,y = readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",True)
 X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
 X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
 #print("X_0 : \n",X_0)
