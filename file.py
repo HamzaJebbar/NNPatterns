@@ -124,40 +124,63 @@ X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
 X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
 #print("X_0 : \n",X_0)
 #print("\nX_1 :\n",X_1)
+#print("yahoo",X_1_0)
 
-# dictionnaire des différentes valeurs de X cryptées
-def encrypting(X_) : 
+# to switch from "value : signature" to "signature : value" or the other way around
+def switchs_keys_values(dict) : 
+	switched_keys_values_dict = {}
+	for x in dict :
+		switched_keys_values_dict[str(dict[x])] = x
+	return switched_keys_values_dict
+
+''' version value : signature'''
+def encrypting_value_signature(X_) : # param X_ is a list of X_0 , X_1 , ... : signatures of each class
 	listOfX_ = []
 	encrypting_X_ = {}
 	key = 1
-	for x in range(len(X_)) : 
-		if not (X_[x] in listOfX_) : 
-			listOfX_.append(X_[x])
-			encrypting_X_[str(X_[x])] = str(key)
-			key += 1
-	return encrypting_X_
+	for x in X_ :
+		for y in range(len(x)) :
+			if not (x[y] in listOfX_) : 
+				listOfX_.append(x[y])
+				encrypting_X_[str(key)] = str(x[y])
+				key += 1
+	#print(listOfX_)
+	return encrypting_X_ # returns a dict of 'value : signature'
 
-encrypting_X_0 = encrypting(X_0)
-encrypting_X_1 = encrypting(X_1)
-print("encrypting X_0 :\n", encrypting_X_0,"\nencrypting X_1 : \n", encrypting_X_1)
+'''version signature : value'''
+def encrypting_signature_value(X_) : # param X_ is a list of X_0 , X_1 , ... : signatures of each class
+	listOfX_ = []
+	encrypting_X_ = {}
+	value = 1
+	for x in X_ :
+		for y in range(len(x)) :
+			if not (x[y] in listOfX_) : 
+				listOfX_.append(x[y])
+				encrypting_X_[str(x[y])] = str(value)
+				value += 1
+	#print(listOfX_)
+	return encrypting_X_ # returns a dict of 'signature : value'
 
-# liste X cryptée
-def X_to_encrypted_X(X_,encrypted_X_) :
-	X = []
+encrypting_value_signature = encrypting_value_signature([X_0,X_1])
+print("\n---dict of encrypted 'value : signature' : \n",encrypting_value_signature)
+
+encrypting_signature_value = encrypting_signature_value([X_0,X_1]) #dict encrypting
+print("\n---dict of encrypted 'signature : value' : \n",encrypting_signature_value,"\n")
+
+print("---dict of encrypted keys and values switched : \n",switchs_keys_values(encrypting_signature_value),"\n")
+
+
+def X_to_encrypted_X(X_,encrypting_signature_value) : # X_ : signatures of a certain class , encrypting_signature_value : the global variable in this code
+	listOfX = []
 	for x in range(len(X_)) :
-		X.append(encrypted_X_[X_[x]])
-	return X
-
-encrypted_X_0 = X_to_encrypted_X(X_0,encrypting_X_0)
-encrypted_X_1 = X_to_encrypted_X(X_1,encrypting_X_1)
-# print("encrypted X_0\n",encrypted_X_0)
-# print("encrypted_X_1\n",encrypted_X_1)
+		#if not(encrypting_signature_value[str(X_[x])] in listOfX) :
+		listOfX.append(encrypting_signature_value[str(X_[x])])
+	return listOfX
+encrypted_X_0 = X_to_encrypted_X(X_0,encrypting_signature_value) 
+encrypted_X_1 = X_to_encrypted_X(X_1,encrypting_signature_value)
+print(encrypted_X_0)
+print(encrypted_X_1)
 
 Histogram(encrypted_X_1,"X1cr.png")
 Histogram(encrypted_X_0,"X0cr.png")
 
-#Histogram(X_1,"X1.png")
-#Histogram(X_0,"X0.png")
-## exemple d’utilisation 
-df=discretise_dataset('iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv',8)
-df.to_csv("iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv", sep=',', encoding='utf-8',index=False)
