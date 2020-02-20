@@ -120,17 +120,7 @@ def Histogram(X,histname):
     plt.savefig(histname)
     plt.clf()
 
-#get_directory_layers_from_csv("iris_8_10_8_.csv")
-'''
-X,X_1_0,y = readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv")
-#print("ligne 124",len(y))
-X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
-X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
-print("X_0 : \n",X_0)
-print("\nX_1 :\n",X_1)
-print("yahoo",X_1_0)
-print(type(X_1_0))
-'''
+
 # to switch from "value : signature" to "signature : value" or the other way around
 def switchs_keys_values(dict) : 
 	switched_keys_values_dict = {}
@@ -163,15 +153,7 @@ def encrypting_signature_value(X_) : # param X_ est X_1_0
 			value += 1
 	#print(listOfX_)
 	return encrypting_X_ # returns a dict of 'signature : value'
-'''
-encrypting_value_signature = encrypting_value_signature(X_1_0)
-#print("\n---dict of encrypted 'value : signature' : \n",encrypting_value_signature)
 
-encrypting_signature_value = encrypting_signature_value(X_1_0) #dict encrypting
-#print("\n---dict of encrypted 'signature : value' : \n",encrypting_signature_value,"\n")
-
-#print("---dict of encrypted keys and values switched : \n",switchs_keys_values(encrypting_signature_value),"\n")
-'''
 
 def X_to_encrypted_X(X_,encrypting_signature_value) : # X_ : signatures of a certain class , encrypting_signature_value : the global variable in this code
 	listOfX = []
@@ -179,40 +161,7 @@ def X_to_encrypted_X(X_,encrypting_signature_value) : # X_ : signatures of a cer
 		#if not(encrypting_signature_value[str(X_[x])] in listOfX) :
 		listOfX.append(encrypting_signature_value[str(X_[x])])
 	return listOfX #returns the X_ crypted
-'''
-encrypted_X_0 = X_to_encrypted_X(X_0,encrypting_signature_value) 
-encrypted_X_1 = X_to_encrypted_X(X_1,encrypting_signature_value)
-#print(encrypted_X_0)
-#print(encrypted_X_1)
 
-Histogram(encrypted_X_1,"X1cr.png")
-Histogram(encrypted_X_0,"X0cr.png") 
-
-#Histogram(X_1,"X1.png")
-#Histogram(X_0,"X0.png")
-
-df=discretise_dataset('iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv',2)
-df.to_csv("iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv", sep=',', encoding='utf-8',index=False) # cette fonction qui rajoute une ligne en fin du fichier dans les disc_csv, doit etre pris en consid.
-
-X,X_1_0,y = readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv")
-X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
-X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
-print("X_0 : \n",X_0)
-print("X_1 : \n",X_1)
-print("X_1_0 : \n",X_1_0)
-print(type(X_1_0))
-list = []
-dict = {}
-value = 1
-for x in range(len(X_1_0)) : 
-	if not(X_1_0[x] in list) :
-		list.append(X_1_0[x])
-		dict[str(X_1_0[x])] = value
-		value += 1
-'''	
-#print(dict)
-#print(encrypting_signature_value(X_1_0))
-#encrypting_signature_value = encrypting_signature_value(X_1_0)
 
 def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" file
 	X,X_1_0,y = readXy(file)
@@ -250,142 +199,10 @@ def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" file
 		file = name_of_generated_file
 		df.to_csv(file, sep=',', encoding='utf-8',index=False)
 
-
-hists_files("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",[2,4,6,8,10])
-
-
-
-
-#print(df)
-
-'''
-#the one to iterate
-X,X_1_0,y = readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv")
-X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
-X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
-
-encrypting_value_signature = encrypting_value_signature([X_0,X_1])
-encrypting_signature_value = encrypting_signature_value([X_0,X_1]) #dict encrypting
-
-encrypted_X_0 = X_to_encrypted_X(X_0,encrypting_signature_value) 
-encrypted_X_1 = X_to_encrypted_X(X_1,encrypting_signature_value)
-
-Histogram(encrypted_X_1,"X1cr.png")
-Histogram(encrypted_X_0,"X0cr.png") 
-'''
 bins = [2,4,6,8,10]
-
-'''
-def automate(file,bins,X_) : 
-	for x in range(len(bins)) :
-		name_of_generated_file = "iris_8_10_8_disc" + str(bins[x]) + ".csv"
-		name_of_pngHist_class0 = "X_0_disc" + str(bins[x]) + ".png"
-		name_of_pngHist_class1 = "X_1_disc" + str(bins[x]) + ".png"
-
-		X,X_1_0,y = readXy(file)
-		X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
-		X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
-		print(X_1_0)
-		print(encrypting_signature_value(X_1_0))
-
-		Histogram(encrypted_X_0,name_of_pngHist_class0)
-		Histogram(encrypted_X_1,name_of_pngHist_class1)
-'''
-'''
-def automate(file,bins,X_) : # X_ est X_1_0 
-	for x in range(len(bins)) :
-		name_of_generated_file = "iris_8_10_8_disc" + str(bins[x]) + ".csv"
-		name_of_pngHist_class0 = "X_0_disc" + str(bins[x]) + ".png"
-		name_of_pngHist_class1 = "X_1_disc" + str(bins[x]) + ".png"
-		X_local,X_1_0_local,y_local = readXy(file)
-		X_1_local = [X_1_0_local[i] for i in range(len(X_1_0_local)) if y_local[i]==1]
-		X_0_local = [X_1_0_local[i] for i in range(len(X_1_0_local)) if y_local[i]==0]
-		#print("X_0 : \n",X_0)
-		#print("\nX_1 :\n",X_1)
-		encrypting_signature_value_local = encrypting_signature_value(X_) 
-		encrypted_X_0_local = X_to_encrypted_X(X_0,encrypting_signature_value_local) 
-		encrypted_X_1_local = X_to_encrypted_X(X_1,encrypting_signature_value_local)
-		Histogram(encrypted_X_0_local,name_of_pngHist_class0)
-		Histogram(encrypted_X_1_local,name_of_pngHist_class1)
-		df = discretise_dataset(file,bins[x])
-		df.to_csv(name_of_generated_file, sep=',',encoding='utf-8',index=False)
-'''
-#automate('iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv',[2],X_1_0) 
-
-'''
-# dictionnaire des différentes valeurs de X cryptées
-def encrypting(X_,encrypting_X_0) :
-	listOfX_= list(switchs_keys_values(encrypting_X_0))
-	print("listOfX_\n",listOfX_)
-	encrypting_X_ = encrypting_X_0
-	key = len(encrypting_X_0) + 1
-	#print(listOfX_)
-	for x in range(len(X_)) : 
-		if not (X_[x] in listOfX_) : 
-			listOfX_.append(X_[x])
-			encrypting_X_[str(key)] = str(X_[x])
-			key += 1
-	#print(listOfX_)
-	return encrypting_X_
+hists_files("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins)
 
 
 
-encrypting_X_0 = encrypting(X_0,{})
-print(encrypting_X_0)
-#print(list(switchs_keys_values(encrypting_X_0)))
-encrypting_X_1 = encrypting(X_1,encrypting_X_0)
-print(encrypting_X_1)'''
 
 
-'''
-print(encrypting_X_1)
-print("encrypting X_0 :\n", encrypting_X_0,"\nencrypting X_1 : \n", encrypting_X_1)
-
-
-# liste X cryptée
-def X_to_encrypted_X(X_,encrypted_X_) :
-	X = []
-	for x in range(len(X_)) :
-		X.append(encrypted_X_[X_[x]])
-	return X
-
-encrypted_X_0 = X_to_encrypted_X(X_0,encrypting_X_0)
-#encrypted_X_1 = X_to_encrypted_X(X_1,encrypting_X_1)
-# print("encrypted X_0\n",encrypted_X_0)
-# print("encrypted_X_1\n",encrypted_X_1)
-
-#Histogram(encrypted_X_1,"X1cr.png")
-Histogram(encrypted_X_0,"X0cr.png")
-
-#Histogram(X_1,"X1.png")
-#Histogram(X_0,"X0.png")
-## exemple d’utilisation '''
-'''
-df=discretise_dataset('iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv',2)
-df.to_csv("iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv", sep=',', encoding='utf-8',index=False)
-print(df)
-bins = [2,4,6,8,10]
-def automate(file,bins) : 
-	for x in range(len(bins)) :
-		name_of_generated_file = "iris_8_10_8_disc" + str(bins[x]) + ".csv"
-		name_of_pngHist_class0 = "X_0_disc" + str(bins[x]) + ".png"
-		name_of_pngHist_class1 = "X_1_disc" + str(bins[x]) + ".png"
-		X,X_1_0,y = readXy(file)
-		X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
-		X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
-		#print("X_0 : \n",X_0)
-		#print("\nX_1 :\n",X_1)
-		
-		encrypting_X_0 = encrypting(X_0)
-		encrypting_X_1 = encrypting(X_1)
-		encrypted_X_0 = X_to_encrypted_X(X_0,encrypting_X_0)
-		encrypted_X_1 = X_to_encrypted_X(X_1,encrypting_X_1)
-
-		Histogram(encrypted_X_0,name_of_pngHist_class0)
-		Histogram(encrypted_X_1,name_of_pngHist_class1)
-
-		df = discretise_dataset(file,bins[x])
-		df.to_csv(name_of_generated_file, sep=',',encoding='utf-8',index=False)
-
-automate('iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv',bins)#
-'''
