@@ -120,26 +120,6 @@ def Histogram(X,histname):
     plt.clf()
 
 
-# to switch from "value : signature" to "signature : value" or the other way around
-def switchs_keys_values(dict) : 
-	switched_keys_values_dict = {}
-	for x in dict :
-		switched_keys_values_dict[str(dict[x])] = x
-	return switched_keys_values_dict
-
-''' version value : signature'''
-def encrypting_value_signature(X_) : # param X_ est X_1_0, ou n'importe quelle liste
-	listOfX_ = []
-	encrypting_X_ = {}
-	key = 1
-	for x in range(len(X_)) :
-		if not (X_[x] in listOfX_) : 
-			listOfX_.append(X_[x])
-			encrypting_X_[str(key)] = str(X_[x])
-			key += 1
-	#print(listOfX_)
-	return encrypting_X_ # returns a dict of 'value : signature'
-
 '''version signature : value'''
 def encrypting_signature_value(X_) : # param X_ est X_1_0
 	listOfX_ = []
