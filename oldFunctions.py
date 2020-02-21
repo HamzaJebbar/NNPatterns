@@ -70,7 +70,7 @@ def discretise_dataset(filename,bins):
     df = pd.read_csv(filename, sep = ',', header = None) 
     oneColumn = np.array(df[1])
     for i in range(2,df.shape[1]):
-        oneColumn=np.append(oneColumn,np.array(df[i]))
+        oneColumn=np.append(oneColumn,np.array(df[i]))    
     dfoneColumn=pd.DataFrame(oneColumn)
     nb_bins=bins
     dftemp=pd.DataFrame()
@@ -84,12 +84,17 @@ def discretise_dataset(filename,bins):
     return df_new
 
 ## Lire le fichier contenant les valeurs et les transformer en String
-def readXy(filename,toString):
+def readXy(filename):
     f = open(filename, "r")
     matrice = f.read().split('\n')
     y = []
     X = []
-    matrice = matrice[1:]
+    # fait au lieu de matrice = matrice[1:] tout court car on envisageait de générer des disc avec les histo
+    if filename[len(filename)-5] == '_' : 
+        matrice = matrice[1:]
+    else :
+    	matrice = matrice[1:len(matrice)-1]
+    # fait au lieu de matrice = matrice[1:] tout court car on envisageait de générer des disc avec les histo
     for i in range(len(matrice)) :
         tab = matrice[i].split(',')
         y.append((int)(tab[0]))
@@ -98,16 +103,14 @@ def readXy(filename,toString):
 
     X_1_0 = []
     for i in range(len(X)) : 
-        if toString==False:
-            X_1_0.append(list(map(lambda x: 1 if x>0 else x ,X[i])))
-        else:
-            x_temp = ""
-            for j in range(len(X[i])):
-                if X[i][j] > 0:
-                    x_temp += "1"
-                else:
-                    x_temp += "0"
-            X_1_0.append(x_temp)
+        # X_1_0.append(list(map(lambda x: 1 if x>0 else x ,X[i])))
+        x_temp = ""
+        for j in range(len(X[i])):
+            if X[i][j] > 0:
+                x_temp += "1"
+            else:
+                x_temp += "0"
+        X_1_0.append(x_temp)
     return X,X_1_0,y
 def Histogram(X,histname):
     fig = plt.hist(X)
@@ -122,79 +125,81 @@ def Histogram(X,histname):
 
 # to switch from "value : signature" to "signature : value" or the other way around
 def switchs_keys_values(dict) : 
-	switched_keys_values_dict = {}
-	for x in dict :
-		switched_keys_values_dict[str(dict[x])] = x
-	return switched_keys_values_dict
+    switched_keys_values_dict = {}
+    for x in dict :
+        switched_keys_values_dict[str(dict[x])] = x
+    return switched_keys_values_dict
 
 ''' version value : signature'''
 def encrypting_value_signature(X_) : # param X_ est X_1_0, ou n'importe quelle liste
-	listOfX_ = []
-	encrypting_X_ = {}
-	key = 1
-	for x in range(len(X_)) :
-		if not (X_[x] in listOfX_) : 
-			listOfX_.append(X_[x])
-			encrypting_X_[str(key)] = str(X_[x])
-			key += 1
-	#print(listOfX_)
-	return encrypting_X_ # returns a dict of 'value : signature'
+    listOfX_ = []
+    encrypting_X_ = {}
+    key = 1
+    for x in range(len(X_)) :
+        if not (X_[x] in listOfX_) : 
+            listOfX_.append(X_[x])
+            encrypting_X_[str(key)] = str(X_[x])
+            key += 1
+    #print(listOfX_)
+    return encrypting_X_ # returns a dict of 'value : signature'
 
 '''version signature : value'''
 def encrypting_signature_value(X_) : # param X_ est X_1_0
-	listOfX_ = []
-	encrypting_X_ = {}
-	value = 1
-	for x in range(len(X_)) :
-		if not (X_[x] in listOfX_) : 
-			listOfX_.append(X_[x])
-			encrypting_X_[str(X_[x])] = str(value)
-			value += 1
-	#print(listOfX_)
-	return encrypting_X_ # returns a dict of 'signature : value'
+    listOfX_ = []
+    encrypting_X_ = {}
+    value = 1
+    for x in range(len(X_)) :
+        if not (X_[x] in listOfX_) : 
+            listOfX_.append(X_[x])
+            encrypting_X_[str(X_[x])] = str(value)
+            value += 1
+    #print(listOfX_)
+    return encrypting_X_ # returns a dict of 'signature : value'
 
 
 def X_to_encrypted_X(X_,encrypting_signature_value) : # X_ : signatures of a certain class , encrypting_signature_value : the global variable in this code
-	listOfX = []
-	for x in range(len(X_)) :
-		#if not(encrypting_signature_value[str(X_[x])] in listOfX) :
-		listOfX.append(encrypting_signature_value[str(X_[x])])
-	return listOfX #returns the X_ crypted
+    listOfX = []
+    for x in range(len(X_)) :
+        #if not(encrypting_signature_value[str(X_[x])] in listOfX) :
+        listOfX.append(encrypting_signature_value[str(X_[x])])
+    return listOfX #returns the X_ crypted
+
+X,X_1_0,y = readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv")
+X_1 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==1]
+X_0 = [X_1_0[i] for i in range(len(X_1_0)) if y[i]==0]
 
 
 def pandas_core_frame_DataFrame_to_list(df) :
-	X = []
-	y_ = []
-	for y in range(len(df)) :
-		x = ""
-		y_.append(str(df[0][y]))
-		for z in range(1,len(df.columns)) :
+    X = []
+    y_ = []
+    for y in range(len(df)) :
+        x = ""
+        y_.append(str(df[0][y]))
+        for z in range(1,len(df.columns)) :
 
-			x += str(df[z][y])
-		X.append(x)
-	return X,y_
+            x += str(df[z][y])
+        X.append(x)
+    return X,y_
 
 
 def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should be the file in param
-	for x in range(len(bins)) : 
-		df=discretise_dataset("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins[x]) 
-		
-		name_of_pngHist_class0 = "X_0_disc" + str(bins[x]) + ".png"
-		name_of_pngHist_class1 = "X_1_disc" + str(bins[x]) + ".png"
+    for x in range(len(bins)) : 
+        df=discretise_dataset("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins[x]) 
+        
+        name_of_pngHist_class0 = "X_0_disc" + str(bins[x]) + ".png"
+        name_of_pngHist_class1 = "X_1_disc" + str(bins[x]) + ".png"
 
-		X_X , y__ = pandas_core_frame_DataFrame_to_list(df) 
-		
-		X_1_ = [X_X[i] for i in range(len(X_X)) if y__[i]=='1']
-		X_0_ = [X_X[i] for i in range(len(X_X)) if y__[i]=='0']
+        X_X , y__ = pandas_core_frame_DataFrame_to_list(df) 
+        
+        X_1_ = [X_X[i] for i in range(len(X_X)) if y__[i]=='1']
+        X_0_ = [X_X[i] for i in range(len(X_X)) if y__[i]=='0']
 
-		encr_sig_val_X_X = encrypting_signature_value(X_X)
-		enc_X_1_ = X_to_encrypted_X(X_1_,encr_sig_val_X_X)
-		enc_X_0_ = X_to_encrypted_X(X_0_,encr_sig_val_X_X)
+        encr_sig_val_X_X = encrypting_signature_value(X_X)
+        enc_X_1_ = X_to_encrypted_X(X_1_,encr_sig_val_X_X)
+        enc_X_0_ = X_to_encrypted_X(X_0_,encr_sig_val_X_X)
 
-		Histogram(enc_X_1_,name_of_pngHist_class1)
-		Histogram(enc_X_0_,name_of_pngHist_class0)
+        Histogram(enc_X_1_,name_of_pngHist_class1)
+        Histogram(enc_X_0_,name_of_pngHist_class0)
 
-
-
-
-
+bins = [2,4,6,8,10]
+hists_files("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins)
