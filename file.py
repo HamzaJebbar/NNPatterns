@@ -32,5 +32,5 @@ df.to_csv("iris_8_10_8_/iris_l1_8_l2_10_l3_8_disc.csv", sep=',', encoding='utf-8
 
 df_X,df_y = pandas_core_frame_DataFrame_to_list(df)
 
-bins = [2,4,6,8,10]
+bins = [2,3,4]
 hists_files("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins)
