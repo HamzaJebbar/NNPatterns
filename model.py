@@ -17,6 +17,7 @@ from sklearn.datasets import make_moons
 from sklearn.datasets import make_circles
 from sklearn import datasets
 from tensorflow.keras.datasets import mnist
+from functions.py import get_directory_layers_from_csv
 
 ## Renvoyer les données prédits correctement
 def get_goodXy(X,y):
@@ -208,43 +209,6 @@ os.system ('sort mnist_512_tmp > mnist_512_.csv')
 # effacer le fichier intermédiaire
 os.system ('rm mnist_512_tmp')
 
-def get_directory_layers_from_csv(filename):
-    tokens=filename.split("_")
-    df = pd.read_csv(filename, sep = ',', header = None) 
-    
-    # creation d'un répertoire pour sauver tous les fichiers
-    repertoire=filename[0:-4]
-    os.makedirs(repertoire, exist_ok=True)
-    string = repertoire+'/'+tokens[0]+'_'
-    f=[]
-    filenames=[]
-    for nb_tokens in range (1,len(tokens)-1):
-        name_file=string+'l'+str(nb_tokens)+'_'+tokens[nb_tokens]+'.csv'
-        f.append(open(name_file, "w"))
-        filenames.append(name_file)
-        
-        
-    # sauvegarde du dataframe dans une chaîne de caracteres
-    ch = df.to_string(header=False,
-                  index=False,
-                  index_names=False).split('\n')
-    vals = [','.join(ele.split()) for ele in ch]
-    
-    # sauvegarde dans des fichiers spécifiques par layer
-    token_layer=[]
-    token_exemples=[]
-    for nb_exemples in range (len(vals)):
-        deb=str(df[0][nb_exemples])+','
-        # 1 ligne correspond à une chaine
-        s=vals[nb_exemples]
-        listoftokens=re.findall(r'<b>,(.+?),</b>', s)
-        nb_layers=len(listoftokens)
-        
-        for nb_token in range (nb_layers):
-            save_token=''
-            save_token=deb+str(listoftokens[nb_token])+'\n'
-            
-            f[nb_token].write(save_token)
 
 #Create a directory with a specific file for all the layers
 filename="iris_8_10_8_.csv"    
