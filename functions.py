@@ -118,20 +118,5 @@ def Histogram(X,histname):
     plt.ylabel('Frequency')
     plt.savefig(histname)
     plt.clf()
-# dictionnaire des différentes valeurs de X cryptées
-def encrypting(X_) : 
-	listOfX_ = []
-	encrypting_X_ = {}
-	key = 1
-	for x in range(len(X_)) : 
-		if not (X_[x] in listOfX_) : 
-			listOfX_.append(X_[x])
-			encrypting_X_[str(X_[x])] = str(key)
-			key += 1
-	return encrypting_X_
-# liste X cryptée
-def X_to_encrypted_X(X_,encrypted_X_) :
-	X = []
-	for x in range(len(X_)) :
-		X.append(encrypted_X_[X_[x]])
-	return X
+
+
