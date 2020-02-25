@@ -118,3 +118,61 @@ def Histogram(X,histname):
     plt.ylabel('Frequency')
     plt.savefig(histname)
     plt.clf()
+
+
+'''version signature : value'''
+def encrypting_signature_value(X_) : # param X_ est X_1_0
+	listOfX_ = []
+	encrypting_X_ = {}
+	value = 1
+	for x in range(len(X_)) :
+		if not (X_[x] in listOfX_) : 
+			listOfX_.append(X_[x])
+			encrypting_X_[str(X_[x])] = str(value)
+			value += 1
+	#print(listOfX_)
+	return encrypting_X_ # returns a dict of 'signature : value'
+
+
+def X_to_encrypted_X(X_,encrypting_signature_value) : # X_ : signatures of a certain class , encrypting_signature_value : the global variable in this code
+	listOfX = []
+	for x in range(len(X_)) :
+		#if not(encrypting_signature_value[str(X_[x])] in listOfX) :
+		listOfX.append(encrypting_signature_value[str(X_[x])])
+	return listOfX #returns the X_ crypted
+
+
+def pandas_core_frame_DataFrame_to_list(df) :
+	X = []
+	y_ = []
+	for y in range(len(df)) :
+		x = ""
+		y_.append(str(df[0][y]))
+		for z in range(1,len(df.columns)) :
+
+			x += str(df[z][y])
+		X.append(x)
+	return X,y_
+
+
+def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should be the file in param
+	for x in range(len(bins)) : 
+		df=discretise_dataset("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins[x]) 
+		
+		name_of_pngHist_class0 = "X_0_disc" + str(bins[x]) + ".png"
+		name_of_pngHist_class1 = "X_1_disc" + str(bins[x]) + ".png"
+
+		X_X , y__ = pandas_core_frame_DataFrame_to_list(df) 
+		
+		X_1_ = [X_X[i] for i in range(len(X_X)) if y__[i]=='1']
+		X_0_ = [X_X[i] for i in range(len(X_X)) if y__[i]=='0']
+
+		encr_sig_val_X_X = encrypting_signature_value(X_X)
+		enc_X_1_ = X_to_encrypted_X(X_1_,encr_sig_val_X_X)
+		enc_X_0_ = X_to_encrypted_X(X_0_,encr_sig_val_X_X)
+
+		Histogram(enc_X_1_,name_of_pngHist_class1)
+		Histogram(enc_X_0_,name_of_pngHist_class0)
+
+
+
