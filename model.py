@@ -17,7 +17,7 @@ from sklearn.datasets import make_moons
 from sklearn.datasets import make_circles
 from sklearn import datasets
 from tensorflow.keras.datasets import mnist
-from functions.py import get_directory_layers_from_csv
+from functions import get_directory_layers_from_csv
 
 ## Renvoyer les données prédits correctement
 def get_goodXy(X,y):
