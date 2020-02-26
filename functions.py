@@ -92,7 +92,7 @@ def readXy(filename,toString):
     matrice = matrice[1:]
     for i in range(len(matrice)) :
         tab = matrice[i].split(',')
-        y.append((tab[0]))
+        y.append((int)(tab[0]))
         # X.append(list(np.array(tab[1:]).astype("float32")))
         X.append(list(np.array(tab[1:]).astype("float32")))
 
