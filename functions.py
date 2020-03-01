@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.7
+import csv
 import os
 import re
 import numpy as np
@@ -89,7 +90,6 @@ def readXy(filename,toString):
     matrice = f.read().split('\n')
     y = []
     X = []
-    matrice = matrice[1:]
     for i in range(len(matrice)) :
         tab = matrice[i].split(',')
         y.append((tab[0]))
@@ -173,6 +173,3 @@ def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should b
 
 		Histogram(enc_X_1_,name_of_pngHist_class1)
 		Histogram(enc_X_0_,name_of_pngHist_class0)
-
-
-

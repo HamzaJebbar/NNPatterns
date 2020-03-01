@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from functions import *
-#get_directory_layers_from_csv("iris_8_10_8_.csv")
+get_directory_layers_from_csv("iris_8_10_8_.csv")
 
 # X contient les valeurs réelles, X_1_0 contient les valeurs réelles X cryptées en 0 et 1
 X,X_1_0,y = readXy("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",True)
