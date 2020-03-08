@@ -55,7 +55,7 @@ layer1_sans_doublons = layer_sans_doublons(layer1)
 
 #print(matrice_distances(layer1_sans_doublons))
 
-print(layer1_sans_doublons)
+#print(layer1_sans_doublons)
 
 mat_dist = matrice_distances(layer1_sans_doublons)
 
@@ -64,10 +64,6 @@ mat_dist = matrice_distances(layer1_sans_doublons)
 mat_dist = np.array(mat_dist).astype("float32")
 
 clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist)
-
-
-
-
 
 
 print(clustering.labels_)

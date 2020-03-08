@@ -179,7 +179,6 @@ def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should b
 def makes_discretised_Layers(filename,bins) :
     disc_X,y = pandas_core_frame_DataFrame_to_list(discretise_dataset(filename,bins))
 
-    print(disc_X)
     #print('disc_X\n\n',disc_X,'\n\n')
     if filename[0] == 'i' : # separation par layers de iris
         layer1 = []
