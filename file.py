@@ -35,17 +35,17 @@ Histogram(encrypting_X_0,"X0cr.png")
 bins = [2,3,4]
 hists_files("mnist_512_/mnist_l1_512_.csv",bins)
 
-layer1,layer2,layer3 = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",10)
+layer1,layer2,layer3, y1 = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",10)
 '''
 print("layers : \n\n",len(layer1[0]),"\n\n",len(layer2[0]),"\n\n",len(layer3[0]))
 '''
 
-malayer1,malayer2,malayer3,malayer4 = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
+malayer1,malayer2,malayer3,malayer4, y2 = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
 '''
 print("layers : \n\n",len(malayer1[0]),"\n\n",len(malayer2[0]),"\n\n",len(malayer3[0]),"\n\n",len(malayer4[0]))
 '''
 
-mnlayer = makes_discretised_Layers("mnist_512_/mnist_l1_512_.csv",10)
+mnlayer, y3 = makes_discretised_Layers("mnist_512_/mnist_l1_512_.csv",10)
 '''
 print("layers : \n\n", len(mnlayer[0]))
 '''
@@ -67,3 +67,14 @@ clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist)
 
 
 print(clustering.labels_)
+
+
+x_enc = encrypting_signature_value(layer1)
+layer1_enc = X_to_encrypted_X(layer1,x_enc)
+
+layer1_enc0 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='0']
+layer1_enc1 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='1']
+
+
+Histogram(layer1_enc0,"hist_par_layer/L1_0.png")
+Histogram(layer1_enc1,"hist_par_layer/L1_1.png")

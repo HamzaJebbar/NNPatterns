@@ -188,7 +188,7 @@ def makes_discretised_Layers(filename,bins) :
             layer1.append(x[:8])
             layer2.append(x[8:18])
             layer3.append(x[18:])
-        return layer1,layer2,layer3
+        return layer1,layer2,layer3,y
     else :
         if filename[0] == 'm' and filename[1]=='a' :
             layer1 = []
@@ -200,9 +200,9 @@ def makes_discretised_Layers(filename,bins) :
                 layer2.append(x[3:13])
                 layer3.append(x[13:23])
                 layer4.append(x[23:])
-            return layer1,layer2,layer3,layer4
+            return layer1,layer2,layer3,layer4,y
         else : 
-            return disc_X
+            return disc_X,y
 
 def distance(sig1,sig2) : 
     next_row = []
