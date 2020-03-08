@@ -173,3 +173,94 @@ def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should b
 
         Histogram(enc_X_1_,name_of_pngHist_class1)
         Histogram(enc_X_0_,name_of_pngHist_class0)
+
+        
+
+def makes_discretised_Layers(filename,bins) :
+    disc_X,y = pandas_core_frame_DataFrame_to_list(discretise_dataset(filename,bins))
+
+    print(disc_X)
+    #print('disc_X\n\n',disc_X,'\n\n')
+    if filename[0] == 'i' : # separation par layers de iris
+        layer1 = []
+        layer2 = []
+        layer3 = []
+        for x in disc_X :
+            layer1.append(x[:8])
+            layer2.append(x[8:18])
+            layer3.append(x[18:])
+        return layer1,layer2,layer3
+    else :
+        if filename[0] == 'm' and filename[1]=='a' :
+            layer1 = []
+            layer2 = []
+            layer3 = []
+            layer4 = []
+            for x in disc_X :
+                layer1.append(x[:3])
+                layer2.append(x[3:13])
+                layer3.append(x[13:23])
+                layer4.append(x[23:])
+            return layer1,layer2,layer3,layer4
+        else : 
+            return disc_X
+
+def distance(sig1,sig2) : 
+    next_row = []
+    for x in range(len(sig1)) : 
+        column = []
+        row = []
+        column.append(str(x))
+        column.append(str(x+1))
+        row.append(str(x+1))
+        if x == 0 :
+            for y in range(len(sig2)) : 
+                if sig1[x] == sig2[y] :
+                    row.append(column[0])
+                    c = column[0]
+                    column=[]
+                    column.append(str(y+1))
+                    column.append(c)
+                else :
+                    c1,c2 = column[0],column[1]
+                    column=[]
+                    row.append(str(min(int(c1),int(c2),y+1) +1))
+                    column.append(str(y+1))
+                    column.append(str(min(int(c1),int(c2),y+1)+1))
+            next_row = row
+            #print(next_row)
+        else : 
+            for y in range(len(sig2)) :
+                if sig1[x] == sig2[y] : 
+                    row.append(column[0])
+                    c = column[0]
+                    column = []
+                    column.append(next_row[y+1])
+                    column.append(c)
+                else :
+                    c1,c2 = column[0],column[1]
+                    column = []
+                    row.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
+                    column.append(next_row[y+1])
+                    column.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
+            next_row = row
+            #print(next_row)
+    return next_row[len(sig2)]
+
+def layer_sans_doublons(layer) :
+    liste = []
+    for x in range(len(layer)) :
+        if not(layer[x] in liste) : liste.append(layer[x])
+    return liste
+
+
+
+def matrice_distances(layer_sans_doublons) :
+    matrice = []
+    #X_iris_l1_disc,y = pandas_core_frame_DataFrame_to_list(discretise_dataset("iris_8_10_8_/iris_l1_8.csv",bins)) 
+    for x in range(len(layer_sans_doublons)) : 
+        mat =[]
+        for y in range(len(layer_sans_doublons)) :
+            mat.append(distance(layer_sans_doublons[x],layer_sans_doublons[y]))
+        matrice.append(mat)
+    return matrice

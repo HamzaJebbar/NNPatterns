@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from functions import *
+from sklearn.cluster import DBSCAN
+
 # get_directory_layers_from_csv("mnist_512_.csv")
 
 # X contient les valeurs réelles, X_1_0 contient les valeurs réelles X cryptées en 0 et 1
@@ -32,3 +34,40 @@ Histogram(encrypting_X_0,"X0cr.png")
 
 bins = [2,3,4]
 hists_files("mnist_512_/mnist_l1_512_.csv",bins)
+
+layer1,layer2,layer3 = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",10)
+'''
+print("layers : \n\n",len(layer1[0]),"\n\n",len(layer2[0]),"\n\n",len(layer3[0]))
+'''
+
+malayer1,malayer2,malayer3,malayer4 = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
+'''
+print("layers : \n\n",len(malayer1[0]),"\n\n",len(malayer2[0]),"\n\n",len(malayer3[0]),"\n\n",len(malayer4[0]))
+'''
+
+mnlayer = makes_discretised_Layers("mnist_512_/mnist_l1_512_.csv",10)
+'''
+print("layers : \n\n", len(mnlayer[0]))
+'''
+#print(layer1,"\n\n")
+layer1_sans_doublons = layer_sans_doublons(layer1)
+#print(layer1_sans_doublons,"\n\n")
+
+#print(matrice_distances(layer1_sans_doublons))
+
+print(layer1_sans_doublons)
+
+mat_dist = matrice_distances(layer1_sans_doublons)
+
+#print(mat_dist)
+
+mat_dist = np.array(mat_dist).astype("float32")
+
+clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist)
+
+
+
+
+
+
+print(clustering.labels_)
