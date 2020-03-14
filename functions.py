@@ -204,47 +204,21 @@ def makes_discretised_Layers(filename,bins) :
         else : 
             return disc_X,y
 
-def distance(sig1,sig2) : 
-    next_row = []
-    for x in range(len(sig1)) : 
-        column = []
-        row = []
-        column.append(str(x))
-        column.append(str(x+1))
-        row.append(str(x+1))
-        if x == 0 :
-            for y in range(len(sig2)) : 
-                if sig1[x] == sig2[y] :
-                    row.append(column[0])
-                    c = column[0]
-                    column=[]
-                    column.append(str(y+1))
-                    column.append(c)
-                else :
-                    c1,c2 = column[0],column[1]
-                    column=[]
-                    row.append(str(min(int(c1),int(c2),y+1) +1))
-                    column.append(str(y+1))
-                    column.append(str(min(int(c1),int(c2),y+1)+1))
-            next_row = row
-            #print(next_row)
-        else : 
-            for y in range(len(sig2)) :
-                if sig1[x] == sig2[y] : 
-                    row.append(column[0])
-                    c = column[0]
-                    column = []
-                    column.append(next_row[y+1])
-                    column.append(c)
-                else :
-                    c1,c2 = column[0],column[1]
-                    column = []
-                    row.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
-                    column.append(next_row[y+1])
-                    column.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
-            next_row = row
-            #print(next_row)
-    return next_row[len(sig2)]
+def distance(s,t) : 
+    if s == "":
+        return len(t)
+    if t == "":
+        return len(s)
+    if s[-1] == t[-1]:
+        cost = 0
+    else:
+        cost = 1
+       
+    res = min([distance(s[:-1], t)+1,
+               distance(s, t[:-1])+1, 
+               distance(s[:-1], t[:-1]) + cost])
+
+    return res
 
 def layer_sans_doublons(layer) :
     liste = []
@@ -256,7 +230,6 @@ def layer_sans_doublons(layer) :
 
 def matrice_distances(layer_sans_doublons) :
     matrice = []
-    #X_iris_l1_disc,y = pandas_core_frame_DataFrame_to_list(discretise_dataset("iris_8_10_8_/iris_l1_8.csv",bins)) 
     for x in range(len(layer_sans_doublons)) : 
         mat =[]
         for y in range(len(layer_sans_doublons)) :
