@@ -83,14 +83,13 @@ l1 , l2, d, dictio = index_columns_and_data_for_percentage_function(clustering.l
 print(classes_percentage_in_clustering(clustering.labels_,y1)) # y1 -> y3
 
 
-'''
+
 x_enc = encrypting_signature_value(layer1)
 layer1_enc = X_to_encrypted_X(layer1,x_enc)
 
 layer1_enc0 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='0']
 layer1_enc1 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='1']
-'''
-'''
+
+
 Histogram(layer1_enc0,"hist_par_layer/L1_0.png")
 Histogram(layer1_enc1,"hist_par_layer/L1_1.png")
-'''
