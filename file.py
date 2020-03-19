@@ -45,7 +45,7 @@ layer2_sans_doublons = layer_sans_doublons(layer2)
 layer3_sans_doublons = layer_sans_doublons(layer3)
 '''
 
-mat_dist1 = matrice_distances(layer1) #layer1 -> mnlayer1
+mat_dist1 = matrice_distances(mnlayer1) #layer1 -> mnlayer1
 mat_dist2 = matrice_distances(layer2)
 mat_dist3 = matrice_distances(layer3)
 #mat_dist4 = matrice_distances(layer4)
@@ -78,9 +78,9 @@ clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist1)
 #clustering3 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist3)
 #clustering4 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist4)
 
-l1 , l2, d, dictio = index_columns_and_data_for_percentage_function(clustering.labels_,y1)# y1 -> y3 
+l1 , l2, d, dictio = index_columns_and_data_for_percentage_function(clustering.labels_,y3)# y1 -> y3 
 #print(l1,"\n\n",l2,"\n\n",d,"\n\n",dictio)
-print(classes_percentage_in_clustering(clustering.labels_,y1)) # y1 -> y3
+print(classes_percentage_in_clustering(clustering.labels_,y3)) # y1 -> y3
 
 
 
