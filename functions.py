@@ -74,14 +74,14 @@ def discretise_dataset(filename,bins):
     dfoneColumn=pd.DataFrame(oneColumn)
     nb_bins=bins
     dftemp=pd.DataFrame()
-    dftemp[0]=pd.cut(dfoneColumn[0], bins=nb_bins, labels=np.arange(nb_bins), right=False)
+    dftemp[0],retbins=pd.cut(dfoneColumn[0], bins=nb_bins, labels=np.arange(nb_bins), right=False,retbins=True)
     df_new=pd.DataFrame(df[0])
     nb_tuples=df.shape[0]
     j=0
     for i in range(1,df.shape[1]):
         df_new[i]=np.copy(dftemp[0][j:j+nb_tuples])
         j+=nb_tuples
-    return df_new
+    return df_new,retbins
 
 ## Lire le fichier contenant les valeurs et les transformer en String
 def readXy(filename,toString):
@@ -109,6 +109,7 @@ def readXy(filename,toString):
                     x_temp += "0"
             X_1_0.append(x_temp)
     return X,X_1_0,y
+
 def Histogram(X,histname):
     fig = plt.hist(X)
     fig = plt.gcf()
@@ -157,7 +158,7 @@ def pandas_core_frame_DataFrame_to_list(df) :
 
 def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should be the file in param
     for x in range(len(bins)) : 
-        df=discretise_dataset("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins[x]) 
+        df,b=discretise_dataset("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins[x]) 
         
         name_of_pngHist_class0 = "X_0_disc" + str(bins[x]) + ".png"
         name_of_pngHist_class1 = "X_1_disc" + str(bins[x]) + ".png"
@@ -177,7 +178,9 @@ def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should b
         
 
 def makes_discretised_Layers(filename,bins) :
-    disc_X,y = pandas_core_frame_DataFrame_to_list(discretise_dataset(filename,bins))
+    ds,b = discretise_dataset(filename,bins)
+    #print("les bins ",b)
+    disc_X,y = pandas_core_frame_DataFrame_to_list(ds)
 
     #print('disc_X\n\n',disc_X,'\n\n')
     if filename[0] == 'i' : # separation par layers de iris
@@ -203,7 +206,7 @@ def makes_discretised_Layers(filename,bins) :
             return layer1,layer2,layer3,layer4,y
         else : 
             return disc_X,y
-
+'''
 def distance(s,t) : 
     if s == "":
         return len(t)
@@ -219,20 +222,92 @@ def distance(s,t) :
                distance(s[:-1], t[:-1]) + cost])
 
     return res
+'''
 
-def layer_sans_doublons(layer) :
-    liste = []
-    for x in range(len(layer)) :
-        if not(layer[x] in liste) : liste.append(layer[x])
-    return liste
+def distance(sig1,sig2) : 
+    next_row = []
+    for x in range(len(sig1)) : 
+        column = []
+        row = []
+        column.append(str(x))
+        column.append(str(x+1))
+        row.append(str(x+1))
+        if x == 0 :
+            for y in range(len(sig2)) : 
+                if sig1[x] == sig2[y] :
+                    row.append(column[0])
+                    c = column[0]
+                    column=[]
+                    column.append(str(y+1))
+                    column.append(c)
+                else :
+                    c1,c2 = column[0],column[1]
+                    column=[]
+                    row.append(str(min(int(c1),int(c2),y+1) +1))
+                    column.append(str(y+1))
+                    column.append(str(min(int(c1),int(c2),y+1)+1))
+            next_row = row
+            #print(next_row)
+        else : 
+            for y in range(len(sig2)) :
+                if sig1[x] == sig2[y] : 
+                    row.append(column[0])
+                    c = column[0]
+                    column = []
+                    column.append(next_row[y+1])
+                    column.append(c)
+                else :
+                    c1,c2 = column[0],column[1]
+                    column = []
+                    row.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
+                    column.append(next_row[y+1])
+                    column.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
+            next_row = row
+            #print(next_row)
+    return next_row[len(sig2)]
 
 
-
-def matrice_distances(layer_sans_doublons) :
+def matrice_distances(layer) :
     matrice = []
-    for x in range(len(layer_sans_doublons)) : 
+    for x in range(len(layer)) : 
         mat =[]
-        for y in range(len(layer_sans_doublons)) :
-            mat.append(distance(layer_sans_doublons[x],layer_sans_doublons[y]))
+        for y in range(len(layer)) :
+            mat.append(distance(layer[x],layer[y]))
         matrice.append(mat)
     return matrice
+
+
+def index_columns_and_data_for_percentage_function(clustering,y) : #clustering et y doivent etre de la meme longueur 
+    liste1 = []
+    liste2 = []   
+    dictio = {}
+    c = 0
+    for x in range(len(y)) :
+        if not((str(clustering[x])) in liste1) : 
+            liste1.append(str(clustering[x]))
+            dictio[str(clustering[x])] = c
+            c += 1
+        if not(("class " + y[x]) in liste2) : 
+            liste2.append("class " + y[x])
+    d = [0] * len(liste2)
+    data = [d] * len(liste1)
+
+    return liste1,liste2,data,dictio
+
+
+def classes_percentage_in_clustering(clustering,y) :
+    #print(y,"\n\n")
+    cluster,y_,d,dictio = index_columns_and_data_for_percentage_function(clustering,y)
+    #print("cluster ",cluster)
+    #print("y_ ",y_)
+    #print("dictio ",dictio)
+    res = pd.DataFrame(index=cluster,columns=y_,data=d)
+    #print(res)
+    for x in range(len(y)) : 
+        #print(type(dictio[str(clustering[x])]))
+        clu = dictio[str(clustering[x])]
+        cla = "class " + y[x]
+        res[cla][clu] += 1     
+    return round(res/len(y) * 100 , 3) 
+
+    
