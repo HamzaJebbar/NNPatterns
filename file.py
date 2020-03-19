@@ -45,14 +45,15 @@ layer2_sans_doublons = layer_sans_doublons(layer2)
 layer3_sans_doublons = layer_sans_doublons(layer3)
 '''
 
-mat_dist1 = matrice_distances(mnlayer1) #layer1 -> mnlayer1
-mat_dist2 = matrice_distances(layer2)
-mat_dist3 = matrice_distances(layer3)
+mat_dist1 = matrice_distances(layer1) #layer1 -> mnlayer1
+#mat_dist2 = matrice_distances(layer2)
+#mat_dist3 = matrice_distances(layer3)
 #mat_dist4 = matrice_distances(layer4)
-
+'''
 mat_dist1 = np.array(mat_dist1).astype("float32")
 mat_dist2 = np.array(mat_dist2).astype("float32")
 mat_dist3 = np.array(mat_dist3).astype("float32")
+'''
 #mat_dist4 = np.array(mat_dist4).astype("float32")
 #print(layer1,"\n\n")
 #print(mat_dist1,"\n\n")
@@ -73,17 +74,17 @@ print(mat_dist4,"\n\n")
 '''
 
 clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist1)
-#print(clustering.labels_)
+#print("clustering ",clustering.labels_)
 #clustering2 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist2)
 #clustering3 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist3)
 #clustering4 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist4)
 
-l1 , l2, d, dictio = index_columns_and_data_for_percentage_function(clustering.labels_,y3)# y1 -> y3 
+l1 , l2, d, dictio = index_columns_and_data_for_percentage_function(clustering.labels_,y1)# y1 -> y3 
 #print(l1,"\n\n",l2,"\n\n",d,"\n\n",dictio)
-print(classes_percentage_in_clustering(clustering.labels_,y3)) # y1 -> y3
+print(classes_percentage_in_clustering(clustering.labels_,y1)) # y1 -> y3
 
 
-
+'''
 x_enc = encrypting_signature_value(layer1)
 layer1_enc = X_to_encrypted_X(layer1,x_enc)
 
@@ -93,3 +94,4 @@ layer1_enc1 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='1']
 
 Histogram(layer1_enc0,"hist_par_layer/L1_0.png")
 Histogram(layer1_enc1,"hist_par_layer/L1_1.png")
+'''

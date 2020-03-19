@@ -264,7 +264,7 @@ def distance(sig1,sig2) :
                     column.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
             next_row = row
             #print(next_row)
-    return next_row[len(sig2)]
+    return int(next_row[len(sig2)])
 
 
 def matrice_distances(layer) :
