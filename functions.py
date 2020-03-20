@@ -206,65 +206,42 @@ def makes_discretised_Layers(filename,bins) :
             return layer1,layer2,layer3,layer4,y
         else : 
             return disc_X,y
-'''
-def distance(s,t) : 
-    if s == "":
-        return len(t)
-    if t == "":
-        return len(s)
-    if s[-1] == t[-1]:
-        cost = 0
-    else:
-        cost = 1
-       
-    res = min([distance(s[:-1], t)+1,
-               distance(s, t[:-1])+1, 
-               distance(s[:-1], t[:-1]) + cost])
 
-    return res
-'''
+def distance(s, t):
+    """ 
+        iterative_levenshtein(s, t) -> ldist
+        ldist is the Levenshtein distance between the strings 
+        s and t.
+        For all i and j, dist[i,j] will contain the Levenshtein 
+        distance between the first i characters of s and the 
+        first j characters of t
+    """
 
-def distance(sig1,sig2) : 
-    next_row = []
-    for x in range(len(sig1)) : 
-        column = []
-        row = []
-        column.append(str(x))
-        column.append(str(x+1))
-        row.append(str(x+1))
-        if x == 0 :
-            for y in range(len(sig2)) : 
-                if sig1[x] == sig2[y] :
-                    row.append(column[0])
-                    c = column[0]
-                    column=[]
-                    column.append(str(y+1))
-                    column.append(c)
-                else :
-                    c1,c2 = column[0],column[1]
-                    column=[]
-                    row.append(str(min(int(c1),int(c2),y+1) +1))
-                    column.append(str(y+1))
-                    column.append(str(min(int(c1),int(c2),y+1)+1))
-            next_row = row
-            #print(next_row)
-        else : 
-            for y in range(len(sig2)) :
-                if sig1[x] == sig2[y] : 
-                    row.append(column[0])
-                    c = column[0]
-                    column = []
-                    column.append(next_row[y+1])
-                    column.append(c)
-                else :
-                    c1,c2 = column[0],column[1]
-                    column = []
-                    row.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
-                    column.append(next_row[y+1])
-                    column.append(str(min(int(c1),int(c2),int(next_row[y+1])) + 1))
-            next_row = row
-            #print(next_row)
-    return int(next_row[len(sig2)])
+    rows = len(s)+1
+    cols = len(t)+1
+    dist = [[0 for x in range(cols)] for x in range(rows)]
+
+    # source prefixes can be transformed into empty strings 
+    # by deletions:
+    for i in range(1, rows):
+        dist[i][0] = i
+
+    # target prefixes can be created from an empty source string
+    # by inserting the characters
+    for i in range(1, cols):
+        dist[0][i] = i
+        
+    for col in range(1, cols):
+        for row in range(1, rows):
+            if s[row-1] == t[col-1]:
+                cost = 0
+            else:
+                cost = 1
+            dist[row][col] = min(dist[row-1][col] + 1,      # deletion
+                                 dist[row][col-1] + 1,      # insertion
+                                 dist[row-1][col-1] + cost) # substitution
+
+    return dist[row][col]
 
 
 def matrice_distances(layer) :
