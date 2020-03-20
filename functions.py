@@ -207,41 +207,42 @@ def makes_discretised_Layers(filename,bins) :
         else : 
             return disc_X,y
 
-def distance(s, t):
-    """ 
-        iterative_levenshtein(s, t) -> ldist
-        ldist is the Levenshtein distance between the strings 
-        s and t.
-        For all i and j, dist[i,j] will contain the Levenshtein 
-        distance between the first i characters of s and the 
-        first j characters of t
-    """
 
-    rows = len(s)+1
-    cols = len(t)+1
-    dist = [[0 for x in range(cols)] for x in range(rows)]
-
-    # source prefixes can be transformed into empty strings 
-    # by deletions:
-    for i in range(1, rows):
-        dist[i][0] = i
-
-    # target prefixes can be created from an empty source string
-    # by inserting the characters
-    for i in range(1, cols):
-        dist[0][i] = i
-        
-    for col in range(1, cols):
-        for row in range(1, rows):
-            if s[row-1] == t[col-1]:
-                cost = 0
-            else:
-                cost = 1
-            dist[row][col] = min(dist[row-1][col] + 1,      # deletion
-                                 dist[row][col-1] + 1,      # insertion
-                                 dist[row-1][col-1] + cost) # substitution
-
-    return dist[row][col]
+def distance (sig1,sig2) : # special sig1 == sig2
+    dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
+    for x in range(len(sig1)) :
+        if x == 0 :
+            if sig1[x] == sig2[x] : dist[x][x] = 0
+            else : dist[x][x] = 1
+        else :
+            c = 0 
+            while c < x :
+                if sig1[x] == sig2[c] : #ok
+                    if c == 0 :
+                        dist[c][x] = x
+                    else : 
+                        dist[c][x] = dist[c-1][x-1] 
+                else :
+                    if c == 0 :#ok
+                        dist[c][x] = min(x , x+1 , dist[c][x-1]) + 1 #ok
+                    else :
+                        dist[c][x] = min(dist[c-1][x],dist[c][x-1],dist[c-1][x-1]) + 1
+                if sig1[c] == sig2[x] : 
+                    if c == 0 :
+                        dist[x][c] = x
+                    else : 
+                        dist[x][c] = dist[x-1][c-1]
+                else : 
+                    if c == 0 :
+                        dist[x][c] = min(x , x+1 , dist[x-1][c]) + 1 #ok 
+                    else :
+                        dist[x][c] = min(dist[x-1][c],dist[x][c-1],dist[x-1][c-1]) + 1
+                c += 1
+            if (sig1[x] == sig2[x]) :
+                dist[x][x] = dist[x-1][x-1]
+            else : 
+                dist[x][x] = min(dist[x][x-1],dist[x-1][x],dist[x-1][x-1]) + 1
+    return dist[x][x]
 
 
 def matrice_distances(layer) :
