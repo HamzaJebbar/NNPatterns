@@ -217,14 +217,14 @@ def distance (sig1,sig2) : # special sig1 == sig2
         else :
             c = 0 
             while c < x :
-                if sig1[x] == sig2[c] : #ok
+                if sig1[x] == sig2[c] : 
                     if c == 0 :
                         dist[c][x] = x
                     else : 
                         dist[c][x] = dist[c-1][x-1] 
                 else :
-                    if c == 0 :#ok
-                        dist[c][x] = min(x , x+1 , dist[c][x-1]) + 1 #ok
+                    if c == 0 :
+                        dist[c][x] = min(x , x+1 , dist[c][x-1]) + 1 
                     else :
                         dist[c][x] = min(dist[c-1][x],dist[c][x-1],dist[c-1][x-1]) + 1
                 if sig1[c] == sig2[x] : 
@@ -234,7 +234,7 @@ def distance (sig1,sig2) : # special sig1 == sig2
                         dist[x][c] = dist[x-1][c-1]
                 else : 
                     if c == 0 :
-                        dist[x][c] = min(x , x+1 , dist[x-1][c]) + 1 #ok 
+                        dist[x][c] = min(x , x+1 , dist[x-1][c]) + 1 
                     else :
                         dist[x][c] = min(dist[x-1][c],dist[x][c-1],dist[x-1][c-1]) + 1
                 c += 1
