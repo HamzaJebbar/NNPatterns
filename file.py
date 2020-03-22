@@ -39,18 +39,32 @@ malayer1,malayer2,malayer3,malayer4, y2 = makes_discretised_Layers("makemoons_3_
 
 mnlayer, y3 = makes_discretised_Layers("mnist_512_/mnist_l1_512_.csv",10)
 
-layer1_sans_doublons = layer_sans_doublons(layer1)
 
-mat_dist = matrice_distances(layer1_sans_doublons)
+layers = []
+layers.append(layer1)
+layers.append(layer2)
+layers.append(layer3)
+
+clusters = clustering(3,layers)
+
+print(clusters[0].labels_)
+
+signatures_clusters("test.csv",clusters,y1) 
+
+
+
+#layer1_sans_doublons = layer_sans_doublons(layer1)
+'''
+mat_dist = matrice_distances(malayer1)
 
 mat_dist = np.array(mat_dist).astype("float32")
 
-clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist)
+clustering = DBSCAN(eps=0.5, min_samples=500,metric='precomputed').fit(mat_dist)
 
 
 print(clustering.labels_)
-
-
+'''
+'''
 x_enc = encrypting_signature_value(layer1)
 layer1_enc = X_to_encrypted_X(layer1,x_enc)
 
@@ -60,3 +74,4 @@ layer1_enc1 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='1']
 
 Histogram(layer1_enc0,"hist_par_layer/L1_0.png")
 Histogram(layer1_enc1,"hist_par_layer/L1_1.png")
+'''

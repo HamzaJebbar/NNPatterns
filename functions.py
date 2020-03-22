@@ -4,6 +4,7 @@ import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.cluster import DBSCAN
 #### permet de sauvegarder également un fichier qui contient tous les layers
 def get_directory_layers_from_csv(filename):
     tokens=filename.split("_")
@@ -204,7 +205,7 @@ def makes_discretised_Layers(filename,bins) :
         else : 
             return disc_X,y
 
-def distance(s,t) : 
+'''def distance(s,t) : 
     if s == "":
         return len(t)
     if t == "":
@@ -219,6 +220,43 @@ def distance(s,t) :
                distance(s[:-1], t[:-1]) + cost])
 
     return res
+'''
+def distance (sig1,sig2) : # special sig1 == sig2
+    dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
+    for x in range(len(sig1)) :
+        if x == 0 :
+            if sig1[x] == sig2[x] : dist[x][x] = 0
+            else : dist[x][x] = 1
+        else :
+            c = 0 
+            while c < x :
+                if sig1[x] == sig2[c] : 
+                    if c == 0 :
+                        dist[c][x] = x
+                    else : 
+                        dist[c][x] = dist[c-1][x-1] 
+                else :
+                    if c == 0 :
+                        dist[c][x] = min(x , x+1 , dist[c][x-1]) + 1 
+                    else :
+                        dist[c][x] = min(dist[c-1][x],dist[c][x-1],dist[c-1][x-1]) + 1
+                if sig1[c] == sig2[x] : 
+                    if c == 0 :
+                        dist[x][c] = x
+                    else : 
+                        dist[x][c] = dist[x-1][c-1]
+                else : 
+                    if c == 0 :
+                        dist[x][c] = min(x , x+1 , dist[x-1][c]) + 1 
+                    else :
+                        dist[x][c] = min(dist[x-1][c],dist[x][c-1],dist[x-1][c-1]) + 1
+                c += 1
+            if (sig1[x] == sig2[x]) :
+                dist[x][x] = dist[x-1][x-1]
+            else : 
+                dist[x][x] = min(dist[x][x-1],dist[x-1][x],dist[x-1][x-1]) + 1
+    return dist[x][x]
+
 
 def layer_sans_doublons(layer) :
     liste = []
@@ -236,3 +274,26 @@ def matrice_distances(layer_sans_doublons) :
             mat.append(distance(layer_sans_doublons[x],layer_sans_doublons[y]))
         matrice.append(mat)
     return matrice
+
+def clustering(nb_layers,layers) :
+	clustering = []
+	for i in range(nb_layers) :
+		mat_dist = matrice_distances(layers[i])
+		mat_dist = np.array(mat_dist).astype("float32")
+		cluster = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist)
+		clustering.append(cluster)
+	return clustering
+def signatures_clusters(filename,clusters,y) :
+	f = open(filename, "w")
+	nb_layers = len(clusters)
+	for i in range(len(y)) :
+		signature = ""+str(y[i])+","
+		for j in range(nb_layers) :
+			signature += "L"+str(j+1)+":";
+			signature += "C"+str(clusters[j].labels_[i])+","
+		signature += '\n'
+		f.write(signature)
+	f.close()
+
+
+
