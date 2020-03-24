@@ -192,7 +192,7 @@ def makes_discretised_Layers(filename,bins) :
             layer1.append(x[:8])
             layer2.append(x[8:18])
             layer3.append(x[18:])
-        return layer1,layer2,layer3,y
+        return layer1,layer2,layer3,y,b
     else :
         if filename[0] == 'm' and filename[1]=='a' :
             layer1 = []
@@ -204,9 +204,16 @@ def makes_discretised_Layers(filename,bins) :
                 layer2.append(x[3:13])
                 layer3.append(x[13:23])
                 layer4.append(x[23:])
-            return layer1,layer2,layer3,layer4,y
+            return layer1,layer2,layer3,layer4,y,b
         else : 
-            return disc_X,y
+            layer1 = []
+            layer2 = []
+            layer3 = []
+            for x in disc_X :
+                layer1.append(x[:64])
+                layer2.append(x[64:96])
+                layer3.append(x[96:112])
+            return layer1,layer2,layer3,y,b
 
 def distance (sig1,sig2) : # special sig1 == sig2
     dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
@@ -243,6 +250,15 @@ def distance (sig1,sig2) : # special sig1 == sig2
             else : 
                 dist[x][x] = min(dist[x][x-1],dist[x-1][x],dist[x-1][x-1]) + 1
     return dist[x][x]
+
+def matrice_distances(layer) :
+    matrice = []
+    for x in range(len(layer)) : 
+        mat =[]
+        for y in range(len(layer)) :
+            mat.append(distance(layer[x],layer[y]))
+        matrice.append(mat)
+    return matrice
 
 
 def layer_sans_doublons(layer) :
@@ -288,9 +304,12 @@ def classes_percentage_in_clustering(clustering,y) :
 def clustering(nb_layers,layers) :
 	clustering = []
 	for i in range(nb_layers) :
+		print("Layer"+str(i))
 		mat_dist = matrice_distances(layers[i])
+		print("Matrice de distance done")
 		mat_dist = np.array(mat_dist).astype("float32")
-		cluster = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist)
+		cluster = DBSCAN(eps=1, min_samples=2,metric='precomputed').fit(mat_dist)
+		print("DBSCAN DONE")
 		clustering.append(cluster)
 	return clustering
 def signatures_clusters(filename,clusters,y) :
