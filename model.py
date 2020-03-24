@@ -67,7 +67,7 @@ names = ['SepalLengthCm', 'SepalWidthCm',
 data = pd.read_csv(url, names=names)
 #Classification binaire sur Virginica et Setosa seulement
 
-data=data[data['Species'].isin(['Iris-virginica', 'Iris-setosa'])]
+data=data[data['Species'].isin(['Iris-virginica', 'Iris-versicolor'])]
 
 i = 8
 data_to_predict = data[:i].reset_index(drop = True)

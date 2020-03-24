@@ -39,10 +39,8 @@ malayer1,malayer2,malayer3,malayer4, y2 = makes_discretised_Layers("makemoons_3_
 
 mnlayer, y3 = makes_discretised_Layers("mnist_512_/mnist_l1_512_.csv",10)
 
-<<<<<<< HEAD
 mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
-=======
->>>>>>> test
+
 
 layers = []
 layers.append(layer1)
@@ -54,12 +52,8 @@ clusters = clustering(3,layers)
 print(clusters[0].labels_)
 
 signatures_clusters("test.csv",clusters,y1) 
-<<<<<<< HEAD
-
 
 clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist1)
 
 l1 , l2, d, dictio = index_columns_and_data_for_percentage_function(clustering.labels_,y3)# y1 -> y3 
 print(classes_percentage_in_clustering(clustering.labels_,y3)) # y1 -> y3
-=======
->>>>>>> test
