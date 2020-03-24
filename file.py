@@ -37,62 +37,23 @@ layer1,layer2,layer3, y1 = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_1
 
 malayer1,malayer2,malayer3,malayer4, y2 = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
 
-mnlayer1, y3 = makes_discretised_Layers("mnist_512_/mnist_l1_512_.csv",10)
+mnlayer, y3 = makes_discretised_Layers("mnist_512_/mnist_l1_512_.csv",10)
 
+mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
 
-'''
-layer1_sans_doublons = layer_sans_doublons(layer1)
-layer2_sans_doublons = layer_sans_doublons(layer2)
-layer3_sans_doublons = layer_sans_doublons(layer3)
-'''
+layers = []
+layers.append(layer1)
+layers.append(layer2)
+layers.append(layer3)
 
-mat_dist1 = matrice_distances(mnlayer1) #layer1 -> mnlayer1
-#mat_dist2 = matrice_distances(layer2)
-#mat_dist3 = matrice_distances(layer3)
-#mat_dist4 = matrice_distances(layer4)
-'''
-mat_dist1 = np.array(mat_dist1).astype("float32")
-mat_dist2 = np.array(mat_dist2).astype("float32")
-mat_dist3 = np.array(mat_dist3).astype("float32")
-'''
-#mat_dist4 = np.array(mat_dist4).astype("float32")
-#print(layer1,"\n\n")
-#print(mat_dist1,"\n\n")
-#print(mat_dist1[1],"\n\n")
-#print(mat_dist1[2],"\n\n")
-#print(mat_dist1[50],"\n\n")
-#print(mat_dist1[60],"\n\n")
-#print(mat_dist1[81],"\n\n")
+clusters = clustering(3,layers)
 
-#print(layer2,"\n\n")
-#print(mat_dist2,"\n\n")
+print(clusters[0].labels_)
 
-#print(layer3,"\n\n")
-#print(mat_dist3,"\n\n")
-'''
-print(layer4,"\n\n")
-print(mat_dist4,"\n\n")
-'''
+signatures_clusters("test.csv",clusters,y1) 
+
 
 clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist1)
-#print("clustering ",clustering.labels_)
-#clustering2 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist2)
-#clustering3 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist3)
-#clustering4 = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist4)
 
 l1 , l2, d, dictio = index_columns_and_data_for_percentage_function(clustering.labels_,y3)# y1 -> y3 
-#print(l1,"\n\n",l2,"\n\n",d,"\n\n",dictio)
 print(classes_percentage_in_clustering(clustering.labels_,y3)) # y1 -> y3
-
-
-'''
-x_enc = encrypting_signature_value(layer1)
-layer1_enc = X_to_encrypted_X(layer1,x_enc)
-
-layer1_enc0 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='0']
-layer1_enc1 = [layer1_enc[i] for i in range(len(layer1_enc)) if y1[i]=='1']
-
-
-Histogram(layer1_enc0,"hist_par_layer/L1_0.png")
-Histogram(layer1_enc1,"hist_par_layer/L1_1.png")
-'''
