@@ -4,6 +4,7 @@ import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.cluster import DBSCAN
 #### permet de sauvegarder également un fichier qui contient tous les layers
 def get_directory_layers_from_csv(filename):
     tokens=filename.split("_")
@@ -207,7 +208,6 @@ def makes_discretised_Layers(filename,bins) :
         else : 
             return disc_X,y
 
-
 def distance (sig1,sig2) : # special sig1 == sig2
     dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
     for x in range(len(sig1)) :
@@ -245,15 +245,11 @@ def distance (sig1,sig2) : # special sig1 == sig2
     return dist[x][x]
 
 
-def matrice_distances(layer) :
-    matrice = []
-    for x in range(len(layer)) : 
-        mat =[]
-        for y in range(len(layer)) :
-            mat.append(distance(layer[x],layer[y]))
-        matrice.append(mat)
-    return matrice
-
+def layer_sans_doublons(layer) :
+    liste = []
+    for x in range(len(layer)) :
+        if not(layer[x] in liste) : liste.append(layer[x])
+    return liste
 
 def index_columns_and_data_for_percentage_function(clustering,y) : #clustering et y doivent etre de la meme longueur 
     liste1 = []
@@ -289,3 +285,22 @@ def classes_percentage_in_clustering(clustering,y) :
     return round(res/len(y) * 100 , 3) 
 
     
+def clustering(nb_layers,layers) :
+	clustering = []
+	for i in range(nb_layers) :
+		mat_dist = matrice_distances(layers[i])
+		mat_dist = np.array(mat_dist).astype("float32")
+		cluster = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist)
+		clustering.append(cluster)
+	return clustering
+def signatures_clusters(filename,clusters,y) :
+	f = open(filename, "w")
+	nb_layers = len(clusters)
+	for i in range(len(y)) :
+		signature = ""+str(y[i])+","
+		for j in range(nb_layers) :
+			signature += "L"+str(j+1)+":";
+			signature += "C"+str(clusters[j].labels_[i])+","
+		signature += '\n'
+		f.write(signature)
+	f.close()
