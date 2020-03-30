@@ -304,6 +304,60 @@ def layer_sans_doublons(layer) :
         if not(layer[x] in liste) : liste.append(layer[x])
     return liste
 
+def index_columns_and_data_for_percentage_function(clustering,y) : #clustering et y doivent etre de la meme longueur 
+    liste1 = []
+    liste2 = []   
+    dictio = {}
+    c = 0
+    for x in range(len(y)) :
+        if not((str(clustering[x])) in liste1) : 
+            liste1.append(str(clustering[x]))
+            dictio[str(clustering[x])] = c
+            c += 1
+        if not(("class " + y[x]) in liste2) : 
+            liste2.append("class " + y[x])
+    d = [0] * len(liste2)
+    data = [d] * len(liste1)
+
+    return liste1,liste2,data,dictio
+
+
+def classes_percentage_in_clustering(clustering,y) :
+    #print(y,"\n\n")
+    cluster,y_,d,dictio = index_columns_and_data_for_percentage_function(clustering,y)
+    #print("cluster ",cluster)
+    #print("y_ ",y_)
+    #print("dictio ",dictio)
+    res = pd.DataFrame(index=cluster,columns=y_,data=d)
+    #print(res)
+    for x in range(len(y)) : 
+        #print(type(dictio[str(clustering[x])]))
+        clu = dictio[str(clustering[x])]
+        cla = "class " + y[x]
+        res[cla][clu] += 1     
+    return round(res/len(y) * 100 , 3) 
+
+def f(clusters_of_layer , y) :
+    clusters_of_class = {}
+    clusters = {}
+    list_of_keys = {}
+    for x in range(len(y)) : 
+        #print(type(clusters_of_layer[x]))
+        key1 = "class" + str(y[x])  + "[c" + str(clusters_of_layer[x]) + "]" 
+        key2 = "clust[" + str(clusters_of_layer[x]) + "]"
+        if not (key1 in list_of_keys) : list_of_keys[key1] = "clust["+str(clusters_of_layer[x])+"]"
+
+        if key1 in clusters_of_class : clusters_of_class[key1] += 1
+        else : clusters_of_class[key1] = 1
+        
+        if key2 in clusters : clusters[key2] += 1
+        else : clusters[key2] = 1
+
+    for key in clusters_of_class : 
+        print("here ",key)
+        clusters_of_class[key] =  round(clusters_of_class[key] / clusters[list_of_keys[key]] * 100 , 3)
+    return clusters_of_class,clusters
+
 def pourcentages_inter (clusters_of_layer,y) :
     class0 = {} 
     class1 = {}
@@ -325,8 +379,8 @@ def pourcentages_inter (clusters_of_layer,y) :
         if key in class0 : class0[key] = round(class0[key]/clusters[key] *100 , 3)
         if key in class1 : class1[key] = round(class1[key]/clusters[key] * 100 , 3)
     res = [] 
-    res.append(class0['0'])
-    res.append(class1['0'])
+    res.append(class0)
+    res.append(class1)
     return res
         
 '''
