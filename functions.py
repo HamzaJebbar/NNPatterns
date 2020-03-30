@@ -188,10 +188,23 @@ def makes_discretised_Layers(filename,bins) :
         layer1 = []
         layer2 = []
         layer3 = []
+        '''
+        y1 = []
+        y2 = []
+        y3 = []
+        passe = True
+        '''
         for x in disc_X :
             layer1.append(x[:8])
-            layer2.append(x[8:18])
+            layer2.append(x[8:18]) 
             layer3.append(x[18:])
+            '''
+            if passe : 
+                y1 = y[:8]
+                y2 = y[8:18]
+                y3 = y[18:]
+                passe = False
+            '''
         return layer1,layer2,layer3,y,b
     else :
         if filename[0] == 'm' and filename[1]=='a' :
@@ -199,20 +212,44 @@ def makes_discretised_Layers(filename,bins) :
             layer2 = []
             layer3 = []
             layer4 = []
+            '''
+            y1 = []
+            y2 = []
+            y3 = []
+            y4 = []
+            '''
             for x in disc_X :
                 layer1.append(x[:3])
                 layer2.append(x[3:13])
                 layer3.append(x[13:23])
                 layer4.append(x[23:])
+                '''
+                if passe :
+                    y1 = y[:3]
+                    y2 = y[3:13]
+                    y3 = y[13:23]
+                    y4 = y[23:]
+                    passe = False
+                '''
             return layer1,layer2,layer3,layer4,y,b
         else : 
             layer1 = []
             layer2 = []
             layer3 = []
+            #y1 = []
+            #y2 = []
+            #y3 = []
             for x in disc_X :
                 layer1.append(x[:64])
                 layer2.append(x[64:96])
                 layer3.append(x[96:112])
+                '''
+                if passe : 
+                    y1 = y[:64]
+                    y2 = y[64:96]
+                    y3 = y[96:112]
+                    passe = False
+                '''
             return layer1,layer2,layer3,y,b
 
 def distance (sig1,sig2) : # special sig1 == sig2
@@ -267,38 +304,43 @@ def layer_sans_doublons(layer) :
         if not(layer[x] in liste) : liste.append(layer[x])
     return liste
 
-def index_columns_and_data_for_percentage_function(clustering,y) : #clustering et y doivent etre de la meme longueur 
-    liste1 = []
-    liste2 = []   
-    dictio = {}
-    c = 0
-    for x in range(len(y)) :
-        if not((str(clustering[x])) in liste1) : 
-            liste1.append(str(clustering[x]))
-            dictio[str(clustering[x])] = c
-            c += 1
-        if not(("class " + y[x]) in liste2) : 
-            liste2.append("class " + y[x])
-    d = [0] * len(liste2)
-    data = [d] * len(liste1)
+def pourcentages_inter (clusters_of_layer,y) :
+    class0 = {} 
+    class1 = {}
+    clusters = {}
+    for i in range(len(y)) :
+        #print(type(y[i]))
+        if y[i] == '0' : 
+            #print("hey ",clusters_of_layer[i])
+            if str(clusters_of_layer[i]) in class0 : class0[str(clusters_of_layer[i])] += 1 
+            else : class0[str(clusters_of_layer[i])] = 1
+        if y[i] == '1' : 
+            #print("hey ",clusters_of_layer[i])
+            if str(clusters_of_layer[i]) in class1 : class1[str(clusters_of_layer[i])] += 1
+            else : class1[str(clusters_of_layer[i])] = 1
+          
+        if str(clusters_of_layer[i]) in clusters : clusters[str(clusters_of_layer[i])] += 1
+        else : clusters[str(clusters_of_layer[i])] = 1
+    for key in clusters : 
+        if key in class0 : class0[key] = round(class0[key]/clusters[key] *100 , 3)
+        if key in class1 : class1[key] = round(class1[key]/clusters[key] * 100 , 3)
+    res = [] 
+    res.append(class0['0'])
+    res.append(class1['0'])
+    return res
+        
+'''
+pourcentage .append retour dial la fonction li lfo9 
+layers y 
+for 3la layers 
+pourcentage.append(f)
+'''
 
-    return liste1,liste2,data,dictio
-
-
-def classes_percentage_in_clustering(clustering,y) :
-    #print(y,"\n\n")
-    cluster,y_,d,dictio = index_columns_and_data_for_percentage_function(clustering,y)
-    #print("cluster ",cluster)
-    #print("y_ ",y_)
-    #print("dictio ",dictio)
-    res = pd.DataFrame(index=cluster,columns=y_,data=d)
-    #print(res)
-    for x in range(len(y)) : 
-        #print(type(dictio[str(clustering[x])]))
-        clu = dictio[str(clustering[x])]
-        cla = "class " + y[x]
-        res[cla][clu] += 1     
-    return round(res/len(y) * 100 , 3) 
+def pourcentages(clusters , y) :
+    res = []
+    for x in range(len(clusters)) :
+        res.append(pourcentages_inter(clusters[x],y))
+    return res
 
     
 def clustering(nb_layers,layers) :
@@ -323,3 +365,5 @@ def signatures_clusters(filename,clusters,y) :
 		signature += '\n'
 		f.write(signature)
 	f.close()
+
+
