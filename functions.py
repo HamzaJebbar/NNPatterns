@@ -343,18 +343,30 @@ def pourcentages(clusters , y) :
         res.append(pourcentages_inter(clusters[x],y))
     return res
 
-    
-def clustering(nb_layers,layers) :
-	clustering = []
-	for i in range(nb_layers) :
-		print("Layer"+str(i))
-		mat_dist = matrice_distances(layers[i])
-		print("Matrice de distance done")
-		mat_dist = np.array(mat_dist).astype("float32")
-		cluster = DBSCAN(eps=1, min_samples=2,metric='precomputed').fit(mat_dist)
-		print("DBSCAN DONE")
-		clustering.append(cluster)
-	return clustering
+
+def strTolist(tab):
+    l = []
+    for i in range(len(tab)):
+        sign = []
+        for j in range(len(tab[i])):
+            sign.append((int)(tab[i][j]))
+        l.append(sign)
+    return l
+
+def clustering(layers,lv=True) :
+    clustering = []
+    for i in range(len(layers)):
+        # print("Layer"+str(i))
+        if lv==True:
+            mat_dist = matrice_distances(layers[i])
+            print("Matrice de distance done")
+            mat_dist = np.array(mat_dist).astype("float32")
+            cluster = DBSCAN(eps=1, min_samples=2,metric='precomputed').fit(mat_dist)
+        else:
+            cluster = DBSCAN(eps=1, min_samples=2).fit(strTolist(layers[i]))
+        print("DBSCAN DONE")
+        clustering.append(cluster)
+    return clustering
 def signatures_clusters(filename,clusters,y) :
 	f = open(filename, "w")
 	nb_layers = len(clusters)
