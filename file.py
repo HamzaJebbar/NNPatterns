@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from functions import *
 from sklearn.cluster import DBSCAN
-from predict import *
+#from predict import *
 
 # get_directory_layers_from_csv("mnist_512_.csv")
 
@@ -52,20 +52,21 @@ from predict import *
 layer1,layer2,layer3,layer4, y, bins = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
 
 # mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
-print("layer1 ",layer1)
-print("y ",len(y))
+#print("layer1 ",layer1)
+#print("y ",len(y))
 
 layers = []
 layers.append(layer1)
 layers.append(layer2)
 layers.append(layer3)
+layers.append(layer4)
 
-clusters = clustering(3,layers)
+clusters = clustering(4,layers)
 #clusters_dict = { i : clusters[i] for i in range(0, len(clusters) ) }
 
 clust = []
 for i in range(len(clusters)) : 
-	print(clusters[i].labels_)
+	#print(clusters[i].labels_)
 	clust.append(list(clusters[i].labels_))
 
 #print(clusters[0].labels_)
@@ -83,6 +84,15 @@ signatures_clusters("mnist_clusters.csv",clusters,y)
 #print("\n clust[0] \n", len(clust[0]))
 #print(dbscan_predict(clusters,layers))
 #c1,c2 = pourcentages_inter(clust[0],y)
-print(pourcentages_inter(clust[0],y))
+#print(pourcentages_inter(clust[0],y))
 
-print(pourcentages(clust,y))
+pourcentages = pourcentages(clust,y)
+
+print(pourcentages)
+
+clusters_classe0, clusters_classe1 = elimination(pourcentages,49)
+
+print(clusters_classe0)
+print(clusters_classe1)
+
+signatures_clusters2("mnist_clusters1.csv",clusters,clusters_classe0,clusters_classe1,y)
