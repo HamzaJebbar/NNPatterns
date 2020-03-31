@@ -60,7 +60,8 @@ layers = []
 layers.append(strTolist(layer1))
 layers.append(strTolist(layer2))
 layers.append(strTolist(layer3))
-# layers.append(strTolist(layer4))
+layers.append(strTolist(layer4))
+
 
 ######### DBSCAN
 
@@ -74,7 +75,15 @@ layers.append(strTolist(layer3))
 ########## KMEANS
 
 clusters,models = p.kmModel(layers,6)
-print(clusters[0],y)
+pourcentages = pourcentages(clusters,y)
+
+clusters_classe0, clusters_classe1 = elimination(pourcentages,10)
+
+#print(clusters_classe0)
+#print(clusters_classe1)
+signatures_clusters2("makemoons_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
+#print(pourcentages(clusters,y))
+#print(clusters[0],y)
 
 
 # signatures_clusters("mnist_clusters.csv",clusters,y) 
@@ -90,13 +99,13 @@ print(clusters[0],y)
 #c1,c2 = pourcentages_inter(clust[0],y)
 #print(pourcentages_inter(clust[0],y))
 
-pourcentages = pourcentages(clust,y)
+#pourcentages = pourcentages(clust,y)
 
-print(pourcentages)
+#print(pourcentages)
 
-clusters_classe0, clusters_classe1 = elimination(pourcentages,49)
+#clusters_classe0, clusters_classe1 = elimination(pourcentages,49)
 
-print(clusters_classe0)
-print(clusters_classe1)
+#print(clusters_classe0)
+#print(clusters_classe1)
 
-signatures_clusters2("mnist_clusters1.csv",clusters,clusters_classe0,clusters_classe1,y)
+#signatures_clusters2("mnist_clusters1.csv",clusters,clusters_classe0,clusters_classe1,y)
