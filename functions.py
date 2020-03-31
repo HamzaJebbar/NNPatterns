@@ -395,18 +395,19 @@ def elimination(pourcentages,threshold) :
 
 
 def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) :
-	f = open(filename, "w")
-	nb_layers = len(clusters)
-	for i in range(len(y)) :
-		signature = ""+str(y[i])+","
-		for j in range(nb_layers) :
-			signature += "L"+str(j+1)+":";
-			signature += "C"+str(clusters[j].labels_[i])
-			signature += "("
-			if(str(clusters[j].labels_[i]) in clusters_classe0[j]) : signature += "0"
-			if(str(clusters[j].labels_[i]) in clusters_classe1[j]) : signature += ",1"
-			signature += "),"
-		signature += '\n'
-		f.write(signature)
-	f.close()
+    f = open(filename, "w")
+    nb_layers = len(clusters)
+    for i in range(len(y)) :
+        signature = ""+str(y[i])+","
+        for j in range(nb_layers) :
+            signature += "L"+str(j+1)+":";
+            signature += "C"+str(clusters[j][i])
+            signature += "("
+            if((str(clusters[j][i]) in clusters_classe0[j]) and (str(clusters[j][i]) in clusters_classe1[j])) : signature += "0,1"
+            elif (str(clusters[j][i]) in clusters_classe0[j]) : signature += "0"
+            elif (str(clusters[j][i]) in clusters_classe1[j]) : signature += "1"
+            signature += "),"
+        signature += '\n'
+        f.write(signature)
+    f.close()
 
