@@ -156,12 +156,12 @@ os.system ('sort makemoons_3_10_10_3_tmp > makemoons_3_10_10_3_.csv')
 os.system ('rm makemoons_3_10_10_3_tmp')
 
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
-X_train_sample=X_train[0:5000]
-y_train_sample=y_train[0:5000]
+X_train_sample=X_train[0:2000]
+y_train_sample=y_train[0:2000]
 
 X_train=X_train_sample
 y_train=y_train_sample
-X_train = X_train.reshape(5000, 784)
+X_train = X_train.reshape(2000, 784)
 X_train = X_train.astype('float32')
 X_train /= 255
 
@@ -198,7 +198,6 @@ model.compile(loss = 'binary_crossentropy' , optimizer = 'adam' , metrics = ['ac
 model.fit(train_X, train_y, epochs = 40, batch_size = 32)
 
 X_good,y_good=get_goodXy (train_X, train_y)
-
 # # Récupération des valeurs de tous les layers sauf le dernier
 result_layers=get_result_layers(model,X_good)
 

@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from functions import *
 from sklearn.cluster import DBSCAN
-
+import predict as p
 # get_directory_layers_from_csv("mnist_512_.csv")
 
 # X contient les valeurs réelles, X_1_0 contient les valeurs réelles X cryptées en 0 et 1
@@ -42,9 +42,9 @@ from sklearn.cluster import DBSCAN
 # bins = [2,3,4]
 # hists_files("mnist_512_/mnist_l1_512_.csv",bins)
 
-# layer1,layer2,layer3, y1 = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",10)
+# layer1,layer2,layer3, y, bins = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",10)
 
-# malayer1,malayer2,malayer3,malayer4, y2 = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
+# layer1,layer2,layer3,layer4, y, bins = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
 
 layer1,layer2,layer3, y, bins = makes_discretised_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
 # layer1,layer2,layer3, y, bins = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",10)
@@ -53,17 +53,26 @@ layer1,layer2,layer3, y, bins = makes_discretised_Layers("mnist_64_32_16_/mnist_
 
 
 layers = []
-layers.append(layer1)
-layers.append(layer2)
-layers.append(layer3)
+layers.append(strTolist(layer1))
+layers.append(strTolist(layer2))
+layers.append(strTolist(layer3))
+# layers.append(strTolist(layer4))
 
-clusters = clustering(3,layers)
+######### DBSCAN
 
-print(clusters[0].labels_)
-print(clusters[1].labels_)
-print(clusters[2].labels_)
+# clusters = clustering(layers,False)
 
-signatures_clusters("mnist_clusters.csv",clusters,y) 
+# print(clusters[2].labels_)
+# print(clusters[1].labels_)
+# print(clusters[0].labels_)
+# print(p.dbscan_predict(clusters[2],strTolist(layer3)))
+
+########## KMEANS
+
+clusters,models = p.kmModel(layers,6)
+print(clusters[0],y)
+
+# signatures_clusters("mnist_clusters.csv",clusters,y) 
 
 # clustering = DBSCAN(eps=2, min_samples=2,metric='precomputed').fit(mat_dist1)
 
