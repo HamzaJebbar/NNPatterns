@@ -169,17 +169,20 @@ X_train /= 255
 X_01=[]
 y_01=[]
 nb_X=0
+X_2 = []
+y_2 = []
 for i in range(X_train.shape[0]):
     if (y_train[i]==0 or y_train[i]==1):
         
         nb_X+=1
         X_01.append(X_train[i])
         y_01.append(y_train[i])
-
+    if y_train[i]==2 :
+        X_2.append(X_train[i])
 
 
 train_X=np.asarray(X_01)
-
+X_2np = np.asarray(X_2)
 train_y=y_01
 
 encoder = LabelEncoder()
@@ -201,6 +204,18 @@ X_good,y_good=get_goodXy (train_X, train_y)
 # # Récupération des valeurs de tous les layers sauf le dernier
 result_layers=get_result_layers(model,X_good)
 
+## traitement de la classe 2
+y_2 = model.predict_classes(X_2np)
+y_2 = [y_2[i][0] for i in range(len(y_2))]
+result2_layers=get_result_layers(model,X_2)
+save_result_layers("VTmnist_64_32_16_tmp",X_2,y_2,result2_layers)
+# # tri du fichier
+os.system ('sort VTmnist_64_32_16_tmp > VTmnist_64_32_16_.csv')
+# # effacer le fichier intermédiaire
+os.system ('rm VTmnist_64_32_16_tmp')
+
+
+
 # Sauvegarde du fichier
 # structure :
 # 0/1 = valeur de la classe
@@ -220,4 +235,8 @@ filename='makemoons_3_10_10_3_.csv'
 get_directory_layers_from_csv(filename) 
 
 filename='mnist_64_32_16_.csv'
+get_directory_layers_from_csv(filename) 
+
+
+filename='VTmnist_64_32_16_.csv'
 get_directory_layers_from_csv(filename) 
