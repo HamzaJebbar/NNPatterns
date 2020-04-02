@@ -47,9 +47,9 @@ import predict as p
 
 # layer1,layer2,layer3,layer4, y, bins = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
 
-#layer1,layer2,layer3, y, bins = makes_discretised_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
+layer1,layer2,layer3, y, bins = makes_discretised_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
 #layer1,layer2,layer3, y, bins = makes_discretised_Layers("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",10)
-layer1,layer2,layer3,layer4, y, bins = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
+#layer1,layer2,layer3,layer4, y, bins = makes_discretised_Layers("makemoons_3_10_10_3_/makemoons_l1_3_l2_10_l3_10_l4_3_.csv",10)
 
 # mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
 #print("layer1 ",layer1)
@@ -60,7 +60,7 @@ layers = []
 layers.append(strTolist(layer1))
 layers.append(strTolist(layer2))
 layers.append(strTolist(layer3))
-layers.append(strTolist(layer4))
+#layers.append(strTolist(layer4))
 
 
 ######### DBSCAN
@@ -74,14 +74,14 @@ layers.append(strTolist(layer4))
 
 ########## KMEANS
 
-clusters,models = p.kmModel(layers,6)
+clusters,models = p.kmModel(layers,4)
 pourcentages = pourcentages(clusters,y)
 
 clusters_classe0, clusters_classe1 = elimination(pourcentages,10)
 
 #print(clusters_classe0)
 #print(clusters_classe1)
-signatures_clusters2("makemoons_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
+signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
 #print(pourcentages(clusters,y))
 #print(clusters[0],y)
 
