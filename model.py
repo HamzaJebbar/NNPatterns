@@ -59,57 +59,57 @@ def save_result_layers(filename,X,y,result_layers):
         f.write(my_string)    
     f.close()
 
-url="https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-names = ['SepalLengthCm', 'SepalWidthCm', 
-         'PetalLengthCm', 'PetalWidthCm', 
-         'Species']
+# url="https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+# names = ['SepalLengthCm', 'SepalWidthCm', 
+#          'PetalLengthCm', 'PetalWidthCm', 
+#          'Species']
 
-data = pd.read_csv(url, names=names)
-#Classification binaire sur Virginica et Setosa seulement
+# data = pd.read_csv(url, names=names)
+# #Classification binaire sur Virginica et Setosa seulement
 
-data=data[data['Species'].isin(['Iris-virginica', 'Iris-versicolor'])]
+# data=data[data['Species'].isin(['Iris-virginica', 'Iris-versicolor'])]
 
-i = 8
-data_to_predict = data[:i].reset_index(drop = True)
-predict_species = data_to_predict.Species 
-predict_species = np.array(predict_species)
-prediction = np.array(data_to_predict.drop(['Species'],axis= 1))
-data = data[i:].reset_index(drop = True)
+# i = 8
+# data_to_predict = data[:i].reset_index(drop = True)
+# predict_species = data_to_predict.Species 
+# predict_species = np.array(predict_species)
+# prediction = np.array(data_to_predict.drop(['Species'],axis= 1))
+# data = data[i:].reset_index(drop = True)
 
-X = data.drop(['Species'], axis = 1)
-X = np.array(X)
-y = data['Species']
-encoder = LabelEncoder()
-y=encoder.fit_transform(y)
-train_X, test_X, train_y, test_y = model_selection.train_test_split(X,y,test_size = 0.1, random_state = 0)
-# Utilisation de keras comme classifieur
-# mettre sigmoid comme fonction car binaire. Attention 1 seul neurone en sortie
-input_dim = len(data.columns) - 1
-model = Sequential()
-model.add(Dense(8, input_dim = input_dim , activation = 'relu'))
-model.add(Dense(10, activation = 'relu'))
-model.add(Dense(8, activation = 'relu'))
-model.add(Dense(1, activation = 'sigmoid'))
+# X = data.drop(['Species'], axis = 1)
+# X = np.array(X)
+# y = data['Species']
+# encoder = LabelEncoder()
+# y=encoder.fit_transform(y)
+# train_X, test_X, train_y, test_y = model_selection.train_test_split(X,y,test_size = 0.1, random_state = 0)
+# # Utilisation de keras comme classifieur
+# # mettre sigmoid comme fonction car binaire. Attention 1 seul neurone en sortie
+# input_dim = len(data.columns) - 1
+# model = Sequential()
+# model.add(Dense(8, input_dim = input_dim , activation = 'relu'))
+# model.add(Dense(10, activation = 'relu'))
+# model.add(Dense(8, activation = 'relu'))
+# model.add(Dense(1, activation = 'sigmoid'))
 
-model.compile(loss = 'binary_crossentropy' , optimizer = 'adam' , metrics = ['accuracy'] )
+# model.compile(loss = 'binary_crossentropy' , optimizer = 'adam' , metrics = ['accuracy'] )
 
-model.fit(train_X, train_y, epochs = 10, batch_size = 2)
+# model.fit(train_X, train_y, epochs = 10, batch_size = 2)
 
-scores = model.evaluate(test_X, test_y)
-print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-# Récupération seulement des bons classés
-X_good,y_good=get_goodXy (train_X, train_y)
-# Récupération des valeurs de tous les layers sauf le dernier
-result_layers=get_result_layers(model,X_good)
-# Sauvegarde du fichier
-# structure :
-# 0/1 = valeur de la classe
-# chaque valeur de layer est entourée par un []
-save_result_layers("iris_8_10_8_tmp",X_good,y_good,result_layers)
-# tri du fichier
-os.system ('sort iris_8_10_8_tmp > iris_8_10_8_.csv')
-# effacer le fichier intermédiaire
-os.system ('rm iris_8_10_8_tmp')
+# scores = model.evaluate(test_X, test_y)
+# print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+# # Récupération seulement des bons classés
+# X_good,y_good=get_goodXy (train_X, train_y)
+# # Récupération des valeurs de tous les layers sauf le dernier
+# result_layers=get_result_layers(model,X_good)
+# # Sauvegarde du fichier
+# # structure :
+# # 0/1 = valeur de la classe
+# # chaque valeur de layer est entourée par un []
+# save_result_layers("iris_8_10_8_tmp",X_good,y_good,result_layers)
+# # tri du fichier
+# os.system ('sort iris_8_10_8_tmp > iris_8_10_8_.csv')
+# # effacer le fichier intermédiaire
+# os.system ('rm iris_8_10_8_tmp')
 X, y = make_moons(n_samples=1000, noise=0.05, random_state=0)
 
 validation_size=0.6 #40% du jeu de données pour le test
@@ -228,8 +228,8 @@ os.system ('rm mnist_64_32_16_tmp')
 
 
 #Create a directory with a specific file for all the layers
-filename="iris_8_10_8_.csv"    
-get_directory_layers_from_csv(filename)    
+# filename="iris_8_10_8_.csv"    
+# get_directory_layers_from_csv(filename)    
 
 filename='makemoons_3_10_10_3_.csv'
 get_directory_layers_from_csv(filename) 
