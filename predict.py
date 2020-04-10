@@ -29,8 +29,11 @@ def kmModel(layers,nb_clusters):
         clusters.append(list(cluster))
     return clusters,models
 
-def kmPredict(X,kmeans):
-	return kmeans.predict(X)
+def kmPredict(layers,kmeans):
+	clusters = []
+	for i in range(len(layers)):
+		clusters.append(list(kmeans[i].predict(layers[i])))
+	return clusters
 
 def kmAccuracy(predictions,y):
 	return accuracy_score(predictions,y)

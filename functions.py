@@ -75,41 +75,31 @@ def discretise_dataset(filename,bins):
     dfoneColumn=pd.DataFrame(oneColumn)
     nb_bins=bins
     dftemp=pd.DataFrame()
-    dftemp[0],retbins=pd.cut(dfoneColumn[0], bins=nb_bins, labels=np.arange(nb_bins), right=False,retbins=True)
+    dftemp=dfoneColumn[0]
+    # dftemp[0],retbins=pd.cut(dfoneColumn[0], bins=nb_bins, labels=np.arange(nb_bins), right=False,retbins=True)
+    # print(retbins)
     df_new=pd.DataFrame(df[0])
     nb_tuples=df.shape[0]
     j=0
     for i in range(1,df.shape[1]):
         df_new[i]=np.copy(dftemp[0][j:j+nb_tuples])
         j+=nb_tuples
-    return df_new,retbins
+    print(df_new)
+    return df_new
 
 ## Lire le fichier contenant les valeurs et les transformer en String
-def readXy(filename,toString):
+def readXy(filename):
     f = open(filename, "r")
     matrice = f.read().split('\n')
     y = []
     X = []
     matrice = matrice[1:]
-    for i in range(len(matrice)) :
+    for i in range(len(matrice)-1) :
         tab = matrice[i].split(',')
         y.append((int)(tab[0]))
         # X.append(list(np.array(tab[1:]).astype("float32")))
         X.append(list(np.array(tab[1:]).astype("float32")))
-
-    X_1_0 = []
-    for i in range(len(X)) : 
-        if toString==False:
-            X_1_0.append(list(map(lambda x: 1 if x>0 else x ,X[i])))
-        else:
-            x_temp = ""
-            for j in range(len(X[i])):
-                if X[i][j] > 0:
-                    x_temp += "1"
-                else:
-                    x_temp += "0"
-            X_1_0.append(x_temp)
-    return X,X_1_0,y
+    return X,y
 
 def Histogram(X,histname):
     fig = plt.hist(X)
@@ -178,10 +168,11 @@ def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should b
 
         
 
-def makes_discretised_Layers(filename,bins) :
-    ds,b = discretise_dataset(filename,bins)
-    #print("les bins ",b)
-    disc_X,y = pandas_core_frame_DataFrame_to_list(ds)
+def makes_Layers(filename,bins=0,disc=False) :
+    # ds = discretise_dataset(filename,bins)
+    # #print("les bins ",b)
+    # disc_X,y = pandas_core_frame_DataFrame_to_list(ds)
+    disc_X,y = readXy(filename)
 
     #print('disc_X\n\n',disc_X,'\n\n')
     if filename[0] == 'i' : # separation par layers de iris
@@ -205,7 +196,7 @@ def makes_discretised_Layers(filename,bins) :
                 y3 = y[18:]
                 passe = False
             '''
-        return layer1,layer2,layer3,y,b
+        return layer1,layer2,layer3,y
     else :
         if filename[0] == 'm' and filename[1]=='a' :
             layer1 = []
@@ -231,7 +222,7 @@ def makes_discretised_Layers(filename,bins) :
                     y4 = y[23:]
                     passe = False
                 '''
-            return layer1,layer2,layer3,layer4,y,b
+            return layer1,layer2,layer3,layer4,y
         else : 
             layer1 = []
             layer2 = []
@@ -250,7 +241,7 @@ def makes_discretised_Layers(filename,bins) :
                     y3 = y[96:112]
                     passe = False
                 '''
-            return layer1,layer2,layer3,y,b
+            return layer1,layer2,layer3,y
 
 def distance (sig1,sig2) : # special sig1 == sig2
     dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
@@ -311,11 +302,11 @@ def pourcentages_inter (clusters_of_layer,y) :
     clusters = {}
     for i in range(len(y)) :
         #print(type(y[i]))
-        if y[i] == '0' : 
+        if y[i] == 0 : 
             #print("hey ",clusters_of_layer[i])
             if str(clusters_of_layer[i]) in class0 : class0[str(clusters_of_layer[i])] += 1 
             else : class0[str(clusters_of_layer[i])] = 1
-        if y[i] == '1' : 
+        if y[i] == 1 : 
             #print("hey ",clusters_of_layer[i])
             if str(clusters_of_layer[i]) in class1 : class1[str(clusters_of_layer[i])] += 1
             else : class1[str(clusters_of_layer[i])] = 1
@@ -349,7 +340,7 @@ def strTolist(tab):
     for i in range(len(tab)):
         sign = []
         for j in range(len(tab[i])):
-            sign.append((int)(tab[i][j]))
+            sign.append((float)(tab[i][j]))
         l.append(sign)
     return l
 
