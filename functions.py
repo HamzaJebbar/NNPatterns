@@ -5,6 +5,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
+import matplotlib
+from sklearn.decomposition import PCA
+import random as rd
+
 #### permet de sauvegarder également un fichier qui contient tous les layers
 def get_directory_layers_from_csv(filename):
     tokens=filename.split("_")
