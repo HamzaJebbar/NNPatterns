@@ -402,3 +402,85 @@ def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) 
         f.write(signature)
     f.close()
 
+def keeps_clear_colors(colors) : 
+    c = []
+    c = [colors[3]]
+    c += [colors[7]]
+    c += colors[9:18]
+    c += colors[19:]
+    return c
+    # a enlever : 0,2,1,4,5,6,8,18
+
+def gives_color_to_cluster(clusters,clear_colors) :
+    dictio = {}
+    c = []
+    sans_doublons_clusters = sans_doublons(clusters)
+    for i in range(len(sans_doublons_clusters)) : 
+        dictio[str(sans_doublons_clusters[i])] = clear_colors[i]
+    for i in clusters : 
+        c.append(dictio[str(i)])
+    return c
+
+def gives_colors_to_classes(classes_y) :
+    c = []
+    for i in classes_y :
+        if i == 0 : 
+            c.append('orange')
+        if i == 1 : 
+            c.append('black')
+    return c 
+
+def line_points(pca,classes_y) :
+    coord = pandas_core_frame_DataFrame_to_list(pca)
+    x = coord[1]
+    y = coord[0]
+    x_ = []
+    y_ = []
+    for i in range(len(coord[0])):
+        x_.append(float(x[i]))
+        y_.append(float(y[i]))
+
+    min_x_0 = min_x_1 = max(x_)
+    max_x_0 = max_x_1 = min(x_)
+    min_y = min(y_)
+    max_y = max(y_)
+
+    for i in range(len(x)) : 
+        if classes_y[i] == 0 :
+            min_x_0 = min(min_x_0,x_[i])
+            max_x_0 = max(max_x_0,x_[i])
+        if classes_y[i] == 1 :
+            min_x_1 = min(min_x_1,x_[i])
+            max_x_1 = max(max_x_1,x_[i])
+    bi_x = min(max(min_x_0,min_x_1),min(max_x_0,max_x_1))
+    bs_x = max(max(min_x_0,min_x_1),min(max_x_0,max_x_1))
+    return bi_x,bs_x,min_y,max_y
+
+def plot2D(layer,clusters_per_layer,classes_y,pca_done=False) :
+    if pca_done==False:
+        pca = PCA(n_components=2) 
+        pca.fit(layer) 
+        pca_data = pd.DataFrame(pca.transform(layer))
+    else: pca_data = pd.DataFrame(layer)
+
+    clear_colors = keeps_clear_colors(list(matplotlib.colors.cnames.keys()))
+    col = gives_color_to_cluster(clusters_per_layer,clear_colors)    
+    classes_colors = gives_colors_to_classes(classes_y)
+    plt.title('génération aléatoire des coordonnées')
+    plt.xlabel("$x$", fontsize=10)
+    plt.ylabel("$y$", fontsize=10)
+    plt.scatter(pca_data[0],pca_data[1],s=100,c=col,marker='o',edgecolors=classes_colors)
+    
+    class0 = plt.scatter([] , [], c='white',marker='o',edgecolors='orange')
+    class1 = plt.scatter([] , [] , c='white',marker='o',edgecolors='black')
+    plt.legend((class0,class1), ("class 0", "class 1"),loc='upper left')
+
+    bi_x,bs_x,min_y,max_y = line_points(pca_data,classes_y)
+    x1 = (bi_x + bs_x)/2
+    x2 = (bi_x + bs_x)/4
+    plt.plot([min(x1,x2),max(x1,x2)],[min_y,max_y],'k');
+    plt.show()
+
+def plot2D_on_all_layers(layers,clusters,classes_y) :
+    for i in range(len(layers)) :
+        plot2D(layers[i],clusters[i],classes_y)
