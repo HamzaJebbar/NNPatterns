@@ -466,7 +466,6 @@ def plot2D(layer,clusters_per_layer,classes_y,pca_done=False) :
         pca.fit(layer) 
         pca_data = pd.DataFrame(pca.transform(layer))
     else: pca_data = pd.DataFrame(layer)
-
     clear_colors = keeps_clear_colors(list(matplotlib.colors.cnames.keys()))
     col = gives_color_to_cluster(clusters_per_layer,clear_colors)    
     classes_colors = gives_colors_to_classes(classes_y)

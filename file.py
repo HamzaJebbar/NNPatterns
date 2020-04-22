@@ -69,7 +69,7 @@ VTclusters= p.kmPredict(VTlayers,models)
 VTpourcentages_mnist = pourcentages(VTclusters,VTy)
 VTclusters_classe0, VTclusters_classe1 = elimination(VTpourcentages_mnist,10)
 signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
-print(VTpourcentages_mnist)
+#print(VTpourcentages_mnist)
 
 plot2D_on_all_layers(layers,clusters,y)
 
