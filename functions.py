@@ -293,11 +293,11 @@ def matrice_distances(layer) :
     return matrice
 
 
-def layer_sans_doublons(layer) :
-    liste = []
-    for x in range(len(layer)) :
-        if not(layer[x] in liste) : liste.append(layer[x])
-    return liste
+def sans_doublons(liste) :
+    l = []
+    for x in range(len(liste)) :
+        if not(liste[x] in l) : l.append(liste[x])
+    return l
 
 
 def pourcentages_inter (clusters_of_layer,y) :
