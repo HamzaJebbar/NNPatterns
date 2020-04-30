@@ -384,13 +384,35 @@ def elimination(pourcentages,threshold) :
 			else : clusters_classe1.append(clusters)
 	return clusters_classe0, clusters_classe1
 
+def sort_key(dic):
+    return dic["source"]
+def sort_key_C(dic):
+    return dic["target"]
 
 def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) :
+    tab = []
+    nodes = []
+    tab_nodes= []
+    colors = {0:"blue",1:"red"}
     f = open(filename, "w")
     nb_layers = len(clusters)
     for i in range(len(y)) :
+        s = "X"+str(y[i])
         signature = ""+str(y[i])+","
         for j in range(nb_layers) :
+            c = "C"+str(j)+str(clusters[j][i])
+            k=0
+            if s not in tab_nodes:
+                tab_nodes.append(s)
+                nodes.append({"name":s,"colornode":colors[y[i]],"bordernode":"true"})
+            while k < len(tab):
+                if tab[k]["source"]==s and tab[k]["target"] == c:
+                    tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1))})
+                    break
+                k+=1
+            if k == len(tab):
+                tab.append({"source":s,"target":c,"value":str(1)})
+
             signature += "L"+str(j+1)+":";
             signature += "C"+str(clusters[j][i])
             signature += "("
@@ -398,7 +420,20 @@ def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) 
             elif (str(clusters[j][i]) in clusters_classe0[j]) : signature += "0"
             elif (str(clusters[j][i]) in clusters_classe1[j]) : signature += "1"
             signature += "),"
+            s = c
+        c =  str(y[i])
+        k=0
+        while k < len(tab):
+            if tab[k]["source"]==s and tab[k]["target"] == c:
+                tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1))})
+                break
+            k+=1
+        if k == len(tab):
+            tab.append({"source":s,"target":c,"value":str(1)})
         signature += '\n'
         f.write(signature)
+    nodes.append({0:colors[0]})
+    nodes.append({1:colors[1]})
     f.close()
+    return tab,nodes
 

@@ -61,19 +61,21 @@ VTlayers.append(strTolist(VTlayer3))
 clusters,models = p.kmModel(layers,4)
 pourcentages_mnist = pourcentages(clusters,y)
 clusters_classe0, clusters_classe1 = elimination(pourcentages_mnist,10)
-signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
+tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
 
 ##VTmnist
 
 VTclusters= p.kmPredict(VTlayers,models)
 VTpourcentages_mnist = pourcentages(VTclusters,VTy)
 VTclusters_classe0, VTclusters_classe1 = elimination(VTpourcentages_mnist,10)
-signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
-print(VTpourcentages_mnist)
+VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
 app = Flask(__name__)
 @app.route("/")
 def home():
-	return render_template("index.html",data=VTpourcentages_mnist)
+	return render_template("index.html",data={"links":tab,"nodes":nodes})
+@app.route("/vt")
+def vthome():
+	return render_template("VTindex.html",data={"links":VT_tab,"nodes":VT_nodes})
 if __name__ == "__main__":
 	app.run(debug=True)
 

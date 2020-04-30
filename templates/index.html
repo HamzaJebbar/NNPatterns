@@ -19,7 +19,7 @@
 
 <script type="text/javascript">
 	var vt = JSON.parse('{{data | tojson}}');
-	//console.log(vt);
+	console.log(vt);
 
 	function calcul_epaisseur(pourcentage){
 		return (pourcentage*35)/100;
@@ -64,9 +64,6 @@
 			}
 		}
 		
-		console.log(clusters_classe0);
-		console.log(clusters_classe1);
-		console.log(clusters_classe0_1);
 		
 		
 		 var svg = d3.select("#svg").append("svg").attr("height","950px").attr("width","100%");
