@@ -8,7 +8,7 @@ from functions import *
 from sklearn.cluster import DBSCAN
 import predict as p
 from flask import Flask,render_template
-
+import json
 ## exemple d’utilisation avec discretisation et histogrammes
 # df,bins=discretise_dataset('mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv',3)
 # df is a pandas_core_frame_DataFrame 
@@ -62,6 +62,7 @@ clusters,models = p.kmModel(layers,4)
 pourcentages_mnist = pourcentages(clusters,y)
 clusters_classe0, clusters_classe1 = elimination(pourcentages_mnist,10)
 tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
+plot2D_on_all_layers("mnist",layers,clusters,y)
 
 ##VTmnist
 
@@ -69,16 +70,15 @@ VTclusters= p.kmPredict(VTlayers,models)
 VTpourcentages_mnist = pourcentages(VTclusters,VTy)
 VTclusters_classe0, VTclusters_classe1 = elimination(VTpourcentages_mnist,10)
 VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
-plot2D_on_all_layers(layers,clusters,y)
-
-
+plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
+with open ("mnist.json","w") as f:
+	json.dump({"links":tab,"nodes":nodes},f)
+with open ("VTmnist.json","w") as f:
+	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
 app = Flask(__name__)
 @app.route("/")
 def home():
-	return render_template("index.html",data={"links":tab,"nodes":nodes})
-@app.route("/vt")
-def vthome():
-	return render_template("VTindex.html",data={"links":VT_tab,"nodes":VT_nodes})
+	return render_template("index.html")
 if __name__ == "__main__":
 	app.run(debug=True)
 
