@@ -3,8 +3,8 @@
 <head>
 	<title></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <script src="https://d3js.org/d3.v5.js"></script>
-        <style>
+<!--         <script src="https://d3js.org/d3.v5.js"></script>
+ -->        <style>
 
 section.wrapper {
   min-width: 400px; /* Minimum width of your wrapper element */
@@ -42,7 +42,7 @@ section.wrapper {
 <body>
 	
 	 <script src="https://d3js.org/d3.v5.min.js"></script>
-        <script src="sankey3.js"></script>
+        <script src="{{url_for('static',filename='sankey3.js')}}"></script>
 
 
 
@@ -78,7 +78,6 @@ section.wrapper {
         </div>
         
       <script>
-      	 var vt = JSON.parse('{{data | tojson}}');
         /* Declaration of some global variables for the select */
         var dataset_default="IR";
         var sankey_default="myclusters.json";
@@ -87,8 +86,9 @@ section.wrapper {
         var heigh_sankey=300;
         
         var dispatch=d3.dispatch("load","filenamechange","sankeydiag","selectmodel","text_model");
-        
-        d3.csv("datafiles.csv"). then (function (filenames) {
+        console.log(dispatch)
+        d3.csv("/static/datafiles.csv"). then (function (filenames) {
+        	console.log("test")
             var fileById = d3.map();
             console.log("lecturedatafiles.csv");
             console.log(fileById);
@@ -101,6 +101,7 @@ section.wrapper {
         
         /*          Menu: select dataset        */
         dispatch.on ("load.menu",function(fileById) {
+        	console.log("test2")
             var select = d3.select("#dataset")
                     .append("select")
                     .on("change", function() { 
@@ -254,7 +255,7 @@ var sankey = d3.sankey()
 var path = sankey.link();
  
 // load the data
-d3.json("myclusters.json").then(function(graph) {
+d3.json("/static/mnist.json").then(function(graph) {
     console.log("cluster",graph)
     var nodeMap = {};
     var colNode={};
@@ -446,7 +447,7 @@ var sankey = d3.sankey()
 var path = sankey.link();
  
 // load the data
-d3.json("myclusters.json").then(function(graph) {
+d3.json("/static/VTminst.json").then(function(graph) {
     var nodeMap = {};
     var colNode={};
     graph.nodes.forEach(function(x) { 

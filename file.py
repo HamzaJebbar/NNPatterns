@@ -71,11 +71,13 @@ VTpourcentages_mnist = pourcentages(VTclusters,VTy)
 VTclusters_classe0, VTclusters_classe1 = elimination(VTpourcentages_mnist,10)
 VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
 plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
-with open ("mnist.json","w") as f:
+with open ("static/mnist.json","w") as f:
 	json.dump({"links":tab,"nodes":nodes},f)
-with open ("VTmnist.json","w") as f:
+with open ("static/VTmnist.json","w") as f:
 	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
 app = Flask(__name__)
+app.static_url_path='/static'
+
 @app.route("/")
 def home():
 	return render_template("index.html")

@@ -420,13 +420,20 @@ def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) 
             signature += "L"+str(j+1)+":";
             signature += "C"+str(clusters[j][i])
             signature += "("
-            if((str(clusters[j][i]) in clusters_classe0[j]) and (str(clusters[j][i]) in clusters_classe1[j])) : signature += "0,1"
-            elif (str(clusters[j][i]) in clusters_classe0[j]) : signature += "0"
-            elif (str(clusters[j][i]) in clusters_classe1[j]) : signature += "1"
+            if((str(clusters[j][i]) in clusters_classe0[j]) and (str(clusters[j][i]) in clusters_classe1[j])) : 
+                signature += "0,1"
+            elif (str(clusters[j][i]) in clusters_classe0[j]) : 
+                signature += "0"
+            elif (str(clusters[j][i]) in clusters_classe1[j]) : 
+                signature += "1"
             signature += "),"
             s = c
         c =  str(y[i])
         k=0
+        if s not in tab_nodes:
+            tab_nodes.append(s)
+            nodes.append({"name":s,"colornode":colors[y[i]],"bordernode":"true"})
+
         while k < len(tab):
             if tab[k]["source"]==s and tab[k]["target"] == c:
                 tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1))})
@@ -436,8 +443,8 @@ def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) 
             tab.append({"source":s,"target":c,"value":str(1)})
         signature += '\n'
         f.write(signature)
-    nodes.append({0:colors[0]})
-    nodes.append({1:colors[1]})
+    nodes.append({"name":"0","colornode":colors[0],"bordernode":"true"})
+    nodes.append({"name":"1","colornode":colors[1],"bordernode":"true"})
     f.close()
     return tab,nodes
 
