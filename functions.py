@@ -495,7 +495,7 @@ def line_points(pca,classes_y) :
     bs_x = max(max(min_x_0,min_x_1),min(max_x_0,max_x_1))
     return bi_x,bs_x,min_y,max_y
 
-def plot2D(layer,clusters_per_layer,classes_y,pca_done=False) :
+def plot2D(layer,clusters_per_layer,classes_y,layer_num,pca_done=False) :
     if pca_done==False:
         pca = PCA(n_components=2) 
         pca.fit(layer) 
@@ -517,8 +517,9 @@ def plot2D(layer,clusters_per_layer,classes_y,pca_done=False) :
     x1 = (bi_x + bs_x)/2
     x2 = (bi_x + bs_x)/4
     plt.plot([min(x1,x2),max(x1,x2)],[min_y,max_y],'k');
-    plt.show()
+    plt.savefig('layer_'+str(layer_num)+'.png')
+    plt.clf()
 
 def plot2D_on_all_layers(layers,clusters,classes_y) :
     for i in range(len(layers)) :
-        plot2D(layers[i],clusters[i],classes_y)
+        plot2D(layers[i],clusters[i],classes_y,i)
