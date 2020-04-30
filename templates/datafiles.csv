@@ -1,0 +1,3 @@
+id,filename,model,textmodel
+Mnist,"mnist.json","dd3.csv","model_IRIS.txt"
+VTMnist,"vtmnist.json","dd3.csv","model_IRIS.txt"
