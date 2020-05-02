@@ -29,13 +29,12 @@ layer1,layer2,layer3, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_
 # VTlayer1,VTlayer2,VTlayer3, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv",10)
 
 # mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
-
 #mnist
 layers = []
 
-layers.append(strTolist(layer1))
-layers.append(strTolist(layer2))
-layers.append(strTolist(layer3))
+layers.append(layer1)
+layers.append(layer2)
+layers.append(layer3)
 
 ##VTmnist
 
@@ -60,7 +59,7 @@ layers.append(strTolist(layer3))
 
 clusters,models = p.kmModel(layers,8)
 pourcentages_mnist = pourcentages(clusters,y)
-# clusters_classe0, clusters_classe1 = elimination(pourcentages_mnist,10)
+clusters_layers = elimination(pourcentages_mnist,10)
 # tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
 # plot2D_on_all_layers("mnist",layers,clusters,y)
 

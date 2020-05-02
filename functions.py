@@ -176,8 +176,22 @@ def makes_Layers(filename,bins=0,disc=False) :
     # ds = discretise_dataset(filename,bins)
     # #print("les bins ",b)
     # disc_X,y = pandas_core_frame_DataFrame_to_list(ds)
-    disc_X,y = readXy(filename)
-
+    name = filename.split("/")
+    name = name[-1].split("_")[1:-1]
+    X,y = readXy(filename)
+    layers = []
+    k=0
+    i = 1
+    j = -1
+    while(i<len(name)):
+        if i==1:
+            layers.append(X[:int(name[i])])
+        else:
+            layers.append(X[int(name[j]):int(name[i])])
+        print(len(layers[k]))
+        k+=1
+        i+=2
+        j+=2
     #print('disc_X\n\n',disc_X,'\n\n')
     if filename[0] == 'i' : # separation par layers de iris
         layer1 = []
@@ -372,17 +386,26 @@ def signatures_clusters(filename,clusters,y) :
 
 	
 def elimination(pourcentages,threshold) :
-	clusters_classe0 = []
-	clusters_classe1 = []
-	for i in range(len(pourcentages)) :
-		for j in range(2) :
-			clusters = []
-			for key in pourcentages[i][j] :
-				if(pourcentages[i][j][key]>=threshold) :
-					clusters.append(key)
-			if(j==0) : clusters_classe0.append(clusters)
-			else : clusters_classe1.append(clusters)
-	return clusters_classe0, clusters_classe1
+    clust_dic = {}
+    for i in range(len(pourcentages)):
+        for key in pourcentages[i]:
+            if key not in clust_dic:
+                clust_dic[key] = []
+            clusters = []
+            for clust in pourcentages[i][key]:
+                if pourcentages[i][key][clust]>=threshold:
+                    clusters.append(clust)
+            clust_dic[key].append(clusters)
+
+	# for k in pourcentages :
+	# 	for j in range(2) :
+	# 		clusters = []
+	# 		for key in pourcentages[i][j] :
+	# 			if(pourcentages[i][j][key]>=threshold) :
+	# 				clusters.append(key)
+	# 		if(j==0) : clusters_classe0.append(clusters)
+	# 		else : clusters_classe1.append(clusters)
+    return clust_dic
 
 def sort_key(dic):
     return dic["source"]
