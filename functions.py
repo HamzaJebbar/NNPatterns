@@ -97,7 +97,7 @@ def readXy(filename):
     matrice = f.read().split('\n')
     y = []
     X = []
-    matrice = matrice[1:]
+    # matrice = matrice[1:]
     for i in range(len(matrice)-1) :
         tab = matrice[i].split(',')
         y.append((int)(tab[0]))
@@ -301,29 +301,25 @@ def sans_doublons(liste) :
 
 
 def pourcentages_inter (clusters_of_layer,y) :
-    class0 = {} 
-    class1 = {}
+    y_prime = list(set(y))
+    clust_dic = {}
     clusters = {}
     for i in range(len(y)) :
-        #print(type(y[i]))
-        if y[i] == 0 : 
-            #print("hey ",clusters_of_layer[i])
-            if str(clusters_of_layer[i]) in class0 : class0[str(clusters_of_layer[i])] += 1 
-            else : class0[str(clusters_of_layer[i])] = 1
-        if y[i] == 1 : 
-            #print("hey ",clusters_of_layer[i])
-            if str(clusters_of_layer[i]) in class1 : class1[str(clusters_of_layer[i])] += 1
-            else : class1[str(clusters_of_layer[i])] = 1
+        if str(y[i]) not in clust_dic:
+            clust_dic[str(y[i])] = {}
+
+        if str(clusters_of_layer[i]) in clust_dic[str(y[i])] : 
+            clust_dic[str(y[i])][str(clusters_of_layer[i])] += 1
+        else : 
+            clust_dic[str(y[i])][str(clusters_of_layer[i])] = 1
           
         if str(clusters_of_layer[i]) in clusters : clusters[str(clusters_of_layer[i])] += 1
         else : clusters[str(clusters_of_layer[i])] = 1
     for key in clusters : 
-        if key in class0 : class0[key] = round(class0[key]/clusters[key] *100 , 3)
-        if key in class1 : class1[key] = round(class1[key]/clusters[key] * 100 , 3)
-    res = [] 
-    res.append(class0)
-    res.append(class1)
-    return res
+        for i in y_prime:
+            if key in clust_dic[str(i)]:
+                clust_dic[str(i)][key] = round(clust_dic[str(i)][key]/clusters[key] *100,3)
+    return clust_dic
         
 '''
 pourcentage .append retour dial la fonction li lfo9 

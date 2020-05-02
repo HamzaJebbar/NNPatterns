@@ -26,7 +26,7 @@ import json
 
 #def loadData():
 layer1,layer2,layer3, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
-VTlayer1,VTlayer2,VTlayer3, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv",10)
+# VTlayer1,VTlayer2,VTlayer3, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv",10)
 
 # mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
 
@@ -39,11 +39,11 @@ layers.append(strTolist(layer3))
 
 ##VTmnist
 
-VTlayers = []
+# VTlayers = []
 
-VTlayers.append(strTolist(VTlayer1))
-VTlayers.append(strTolist(VTlayer2))
-VTlayers.append(strTolist(VTlayer3))
+# VTlayers.append(strTolist(VTlayer1))
+# VTlayers.append(strTolist(VTlayer2))
+# VTlayers.append(strTolist(VTlayer3))
 
 
 ######### DBSCAN
@@ -58,29 +58,29 @@ VTlayers.append(strTolist(VTlayer3))
 ########## KMEANS
 ##mnist
 
-clusters,models = p.kmModel(layers,4)
+clusters,models = p.kmModel(layers,8)
 pourcentages_mnist = pourcentages(clusters,y)
-clusters_classe0, clusters_classe1 = elimination(pourcentages_mnist,10)
-tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
-plot2D_on_all_layers("mnist",layers,clusters,y)
+# clusters_classe0, clusters_classe1 = elimination(pourcentages_mnist,10)
+# tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
+# plot2D_on_all_layers("mnist",layers,clusters,y)
 
-##VTmnist
+# ##VTmnist
 
-VTclusters= p.kmPredict(VTlayers,models)
-VTpourcentages_mnist = pourcentages(VTclusters,VTy)
-VTclusters_classe0, VTclusters_classe1 = elimination(VTpourcentages_mnist,10)
-VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
-plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
-with open ("static/mnist.json","w") as f:
-	json.dump({"links":tab,"nodes":nodes},f)
-with open ("static/VTmnist.json","w") as f:
-	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
-app = Flask(__name__)
-app.static_url_path='/static'
+# VTclusters= p.kmPredict(VTlayers,models)
+# VTpourcentages_mnist = pourcentages(VTclusters,VTy)
+# VTclusters_classe0, VTclusters_classe1 = elimination(VTpourcentages_mnist,10)
+# VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
+# plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
+# with open ("static/mnist.json","w") as f:
+# 	json.dump({"links":tab,"nodes":nodes},f)
+# with open ("static/VTmnist.json","w") as f:
+# 	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
+# app = Flask(__name__)
+# app.static_url_path='/static'
 
-@app.route("/")
-def home():
-	return render_template("index.html")
-if __name__ == "__main__":
-	app.run(debug=True)
+# @app.route("/")
+# def home():
+# 	return render_template("index.html")
+# if __name__ == "__main__":
+# 	app.run(debug=True)
 

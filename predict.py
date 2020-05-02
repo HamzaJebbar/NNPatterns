@@ -27,6 +27,7 @@ def kmModel(layers,nb_clusters):
         cluster = kmeans.predict(layers[i])
         models.append(kmeans)
         clusters.append(list(cluster))
+        
     return clusters,models
 
 def kmPredict(layers,kmeans):
