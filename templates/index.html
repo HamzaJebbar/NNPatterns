@@ -173,7 +173,7 @@ font-weight:bold;
             var colorMap = {
             'C0':'blue',
             'C1':'red',
-            'C2':'ff8200',
+            'C2':'orange',
             'C3':'yellow',
             'C4':'009a44',
             'C5':'8c857b',
@@ -241,7 +241,7 @@ font-weight:bold;
                     source: nodeMap[x.source],
                     target: nodeMap[x.target],
                     value: x.value,
-                    classname: x.classname,
+                    numclass: x.numclass,
                     list_objects: x.list_objects
                   };
                  
@@ -262,8 +262,8 @@ font-weight:bold;
                   .attr("class", "link")
                   .attr("d", path)
                   .style("stroke", function(d){ 
-                  return colorMap[d.classname];
-                  return d3.rgb(colorMap[d.classname]);
+                  return colorMap[d.numclass];
+                  return d3.rgb(colorMap[d.numclass]);
                   })
                   .style("stroke-opacity", ".2")
                   .style("stroke-width", function(d) { return Math.max(1, d.dy); })
