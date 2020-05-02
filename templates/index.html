@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<!--         <script src="https://d3js.org/d3.v5.js"></script>
- -->        <style>
+<meta meta="viewport" content="width=device-width,initial-scale=1">
+<title>Pattern Signatures for Deep Neural Networks</title>
+<style>
+
+body {
+  font-family: sans-serif;
+}
 
 section.wrapper {
   min-width: 400px; /* Minimum width of your wrapper element */
@@ -26,6 +27,7 @@ section.wrapper {
   clear: both;
 }
 
+
 .link {
   fill: none;
   stroke: #000;
@@ -35,16 +37,15 @@ section.wrapper {
 .link:hover {
   stroke-opacity: .5;
 }
-
+.bigbold {
+font-size:15px;
+font-weight:bold;
+}
 </style>
 
-</head>
 <body>
-	
-	 <script src="https://d3js.org/d3.v5.min.js"></script>
-        <script src="{{url_for('static',filename='sankey3.js')}}"></script>
-
-
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="/static/sankey3.js"></script>
 
         <!-- Template of the page -->
         <!-- title -->
@@ -54,15 +55,10 @@ section.wrapper {
 
 
         <!-- Plot the Sankey -->
-        <div>
-              <div id="plotsankey">
-        <!--
-            <svg id="svgsankey" width="400" height="300" viewBox="0 0 400 300"></svg>   
-            -->
-              </div>
-              <div id='legend'>
-              </div>
-        </div>
+        <div id='legend'></div>
+        <div id="sankeyplace"></div>
+        <div id="objectplace"></div>
+
         <!-- Plot the layers and the clusters-->
         <div class="row">
                  <div class="column">
@@ -77,18 +73,17 @@ section.wrapper {
 
         </div>
         
-      <script>
+<script>
         /* Declaration of some global variables for the select */
         var dataset_default="IR";
-        var sankey_default="myclusters.json";
+        var sankey_default="IrisAll.json";
         var layers_default="dense_1 (Dense)";
         var width_sankey=980;
         var heigh_sankey=300;
         
-        var dispatch=d3.dispatch("load","filenamechange","sankeydiag","selectmodel","text_model");
-        console.log(dispatch)
+        var dispatch=d3.dispatch("load","filenamechange","sankeydiag","model");
+        
         d3.csv("/static/datafiles.csv"). then (function (filenames) {
-        	console.log("test")
             var fileById = d3.map();
             console.log("lecturedatafiles.csv");
             console.log(fileById);
@@ -96,12 +91,11 @@ section.wrapper {
             dispatch.call("load", this, fileById);
             console.log("dataset_default",dataset_default)
             dispatch.call("filenamechange", this, fileById.get(dataset_default))
-            dispatch.call("selectmodel",this,fileById.get(dataset_default))
+            //dispatch.call("selectmodel",this,fileById.get(dataset_default))
         });
         
         /*          Menu: select dataset        */
         dispatch.on ("load.menu",function(fileById) {
-        	console.log("test2")
             var select = d3.select("#dataset")
                     .append("select")
                     .on("change", function() { 
@@ -109,8 +103,8 @@ section.wrapper {
                         console.log("fileById.get(this.value)",fileById.get(this.value));
                         console.log("fileById",fileById);
                         dispatch.call("filenamechange", this, fileById.get(this.value));
-                        dispatch.call("selectmodel",this,fileById.get(this.value));
-                        dispatch.call("text_model",this,fileById.get(this.value));
+                        //dispatch.call("model",this,fileById.get(this.value));
+                        dispatch.call("model",this,fileById.get(this.value));
                         dispatch.call("sankeydiag",this,fileById.get(this.value));
                       });
                     select.selectAll("option")
@@ -124,54 +118,8 @@ section.wrapper {
                     });
           });  // load.menu       
         
-        /*          Menu: select layer       */
-        dispatch.on("selectmodel", function(fileById) {
-                console.log("DISPATCH SELECT_MODEL");
-                console.log("fileById",fileById);
-                console.log("fileById.model",fileById.model);
-
-               /* Manage the selection of the layers 
-                  Format of the file:
-                  value,layer,image
-                  1,"name of the first layer ","image1.png"
-                  2,"name of the second layer","image2.png"
-                  ...
-                      */        
-                      
-                d3.csv(fileById.model).then (function(datamodel) {
-                    // Select selectmodel the place at the bottom left
-                    // remove if already exist
-                    d3.select("#select2").remove()
-                    var select = d3.select('#selectmodel').append("select").attr("id","select2")
-                                        .property("selected", function(d){ return d === layers_default; });
-                    select.on("change",function(d){
-                           var value=d3.select(this).property("value");
-                           var image=d3.select(this).property("image");
-                           console.log("On change",value);
-                           console.log("this",this)
-                           console.log("datamodel[value].image",datamodel[value].image)
-                           d3.select("#img1").remove()
-                           d3.select("#svg1").remove()
-                           var mysvg=d3.select("#divplot")
-                           mysvg.append("svg").attr("id",'svg1')
-                                .attr('width',"500")
-                                .attr('height',"300")
-                               .append('image')
-                               .attr("id",'img1')
-                               .attr('xlink:href', datamodel[value].image)
-                               .attr('width',"100%")
-                               .attr('height',"100%");
-                    });
-                    select.selectAll("option")
-                        .data(datamodel)
-                        .enter()
-                        .append("option")
-                       .text(function (d) {return d.layer; })
-                       .attr("value", function (d) { return d.value; });
-               });	
-         }); // dispatch select model
          
-        dispatch.on("text_model", function(fileById) {
+        dispatch.on("model", function(fileById) {
                 console.log("DISPATCH TEXT_MODEL");
                 console.log("fileById",fileById);
                 console.log("fileById.textmodel",fileById.textmodel);
@@ -182,7 +130,9 @@ section.wrapper {
                   console.log("par",parsedCSV)
                   // remove if already exist
                    d3.select("#mytable").remove()
+                   d3.select("#myp").remove()
                   var mytable = d3.select("#model")
+                        .append('p').attr("id","myp").text("The associated model:").attr("font-weight",15)
                         .append("table").attr("id","mytable")
                         .style("border-collapse", "collapse")
                         .style("border", "2px black solid");                  
@@ -197,7 +147,7 @@ section.wrapper {
                               .style("background-color", "lightgray")
                              .style("font-weight", "bold")
                              .style("text-transform", "uppercase");
-        
+  
                    // table       
                    mytable.selectAll("tr")
                       .data(parsedCSV).enter()
@@ -216,375 +166,256 @@ section.wrapper {
                 console.log("DISPATCH SANKEY");
                 console.log("fileById",fileById);
                 console.log("fileById.model",fileById.filename);
-   
- var units = "Objects";
 
-var margin = {top: 10, right: 10, bottom: 10, left: 10},
-    width = width_sankey - margin.left - margin.right,
-    height = heigh_sankey - margin.top - margin.bottom;
- 
-var formatNumber = d3.format(",.0f"),    // zero decimal places
-    format = function(d) { return formatNumber(d) + " " + units; };
-    //color = d3.scale.category20();
-    //color = d3.scaleOrdinal(d3.schemeCategory10);
- 
-// append the svg canvas to the page
-// remove if already exist
-d3.select("#svgsankey").remove()
-var svg = d3.select("#plotsankey").append("svg").attr("id","svgsankey")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", 
-          "translate(" + margin.left + "," + margin.top + ")");
-
-// append the array for the legend
-d3.select("#legendsankey").remove()
-var legend=d3.select("#legend").append("table").attr("id","legendsankey")
-        .style("border-collapse", "collapse")
-       .style("border", "2px black solid");   
-       
-       
-const defs = svg.append('defs'); 
-// Set the sankey diagram properties
-var sankey = d3.sankey()
-    .nodeWidth(20)
-    .nodePadding(10)
-    .size([width, height]);
- 
-var path = sankey.link();
- 
-// load the data
-d3.json("/static/VTmnist.json").then(function(graph) {
-    console.log("cluster",graph)
-    var nodeMap = {};
-    var colNode={};
-    graph.nodes.forEach(function(x) { 
-        nodeMap[x.name] = x; 
-        //colNode[x.name]=x.name.substring(0,1);
-     });
-    graph.links = graph.links.map(function(x) {
-      return {
-        source: nodeMap[x.source],
-        target: nodeMap[x.target],
-        value: x.value
-      };
-    });
- 
-//manage the legend
-
-    
-// end of manage lengend
-  sankey
-      .nodes(graph.nodes)
-      .links(graph.links)
-      .layout(32);
- 
-// add in the links
-  var link = svg.append("g").selectAll(".link")
-      .data(graph.links)
-    .enter().append("path")
-      .attr("class", "link")
-      .attr("d", path)
-      .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-      .sort(function(a, b) { return b.dy - a.dy; })
-      //.style('fill','none')
-      .style('stroke-opacity', 0.18)
-      ;
- 
-// add the link titles
-  link.append("title")
-        .text(function(d) {
-      	return d.source.name + " -> " + 
-                d.target.name + "\n" + format(d.value); });
- 
-// add in the nodes
-  var node = svg.append("g").selectAll(".node")
-      .data(graph.nodes)
-    .enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) { 
-		  return "translate(" + d.x + "," + d.y + ")"; })
-        .call(d3.drag()
-        .subject(function(d) {
-          return d;
-        })
-        .on("start", function() {
-          this.parentNode.appendChild(this);
-        })
-        .on("drag", dragmove));
-
- 
-// add the rectangles for the nodes
-  node.append("rect")
-      .attr("height", function(d) { return d.dy; })
-      .attr("width", sankey.nodeWidth())
-      .attr("border", function (d){
-      console.log(d.bordernode);
-      return d.border=d.bordernode;
-      })
-      .style("fill", function(d) { 
-        return d.color = d.colornode;})
-      /*.style("stroke", function(d) { 
-                 if (d.bordernode=="true"){
-                 return d3.rgb(d.color).darker(2) }
-                 else return d3.rgb(d.color).darker(1)})*/
-     .style("stroke", function(d) { 
-                 return d3.rgb(d.color).darker(2) })
-      //.style("stroke-width", d => d.bordernode ? "4":"1")
-      .style("stroke-width",  function(d) { 
-                 if (d.bordernode=="true"){
-                 return 5}
-                 else return 2})
-    .append("title")
-      .text(function(d) { 
-		  return d.name + "\n" + format(d.value); });
- 
-// add in the title for the nodes
-  node.append("text")
-      .attr("x", -6)
-      .attr("y", function(d) { return d.dy / 2; })
-      .attr("dy", ".35em")
-      .attr("text-anchor", "end")
-      .attr("transform", null)
-      .text(function(d) { return d.name; })
-    .filter(function(d) { return d.x < width / 2; })
-      .attr("x", 6 + sankey.nodeWidth())
-      .attr("text-anchor", "start");
- 
- 
- // add gradient to links
-  link.style('stroke', (d, i) => {
-    console.log('d from gradient stroke func', d);
-
-    // make unique gradient ids  
-    const gradientID = `gradient${i}`;
-
-    const startColor = d.source.color;
-    const stopColor = d.target.color;
-
-    console.log('startColor', startColor);
-    console.log('stopColor', stopColor);
-
-    const linearGradient = defs.append('linearGradient')
-        .attr('id', gradientID);
-
-    linearGradient.selectAll('stop') 
-      .data([                             
-          {offset: '10%', color: startColor },      
-          {offset: '90%', color: stopColor }    
-        ])                  
-      .enter().append('stop')
-      .attr('offset', d => {
-        console.log('d.offset', d.offset);
-        return d.offset; 
-      })   
-      .attr('stop-color', d => {
-        console.log('d.color', d.color);
-        return d.color;
-      });
-
-    return `url(#${gradientID})`;
-  })
- 
- 
- 
-// the function for moving the nodes
-  function dragmove(d) {
-   d3.select(this).attr("transform", 
-        "translate(" + (
-        	   d.x ) + "," + (
-                   d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
-            ) + ")");
-    sankey.relayout();
-    link.attr("d", path);
-  }
-});
-
-
-});// dispatch sankey
- 
+            var units = "Objects";
             
+            // set the colors
+            var colorMap = {
+            'C0':'blue',
+            'C1':'red',
+            'C2':'ff8200',
+            'C3':'yellow',
+            'C4':'009a44',
+            'C5':'8c857b',
+            'C6':'ba0c2f',
+            'C7':'ad1aac',
+            'C8':'003da5',
+            'C9':'004851',
+            'C10':'002855',
+            'C11':'4d2177'
+            };
+
+            // set the dimensions and margins of the graph
+                var margin = {
+                  top: window.innerHeight * 0.05, right: window.innerWidth * 0.05
+                  , bottom: window.innerHeight * 0.05, left: window.innerWidth * 0.05
+                },
+                  width = window.innerWidth - margin.left - margin.right,
+                  height = 600 - margin.top - margin.bottom;
             
+            var formatNumber = d3.format(",.0f"),    // zero decimal places
+                format = function(d) { return formatNumber(d) + " " + units; },
+                color = d3.scaleOrdinal(d3.schemeCategory10);
+             
+            // clean a previous one
+            d3.select("#thelegend").remove()
+             d3.select("#thelsankey").remove()
+             d3.select("#objectlist").remove()
+             d3.select("#thelegend").remove()
+             d3.select('#myobjectplace').remove()
+             
+            // append the svg canvas to the page
+            d3.select("#thelsankey").remove()
+            var svg = d3.select("#sankeyplace").append("svg").attr('id','thelsankey')
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+              .append("g")
+                .attr("transform", 
+                      "translate(" + margin.left + "," + margin.top + ")");
+             
+            var ok_click=false;
+
+            const defs = svg.append('defs'); 
+            // Set the sankey diagram properties
+            var sankey = d3.sankey()
+                .nodeWidth(20)
+                .nodePadding(10)
+                .size([width, height]);
+             
+            var path = sankey.link();
+             
+             
+            // load the data
+            d3.json(fileById.filename).then(function(graph) {
+                var nodeMap = {};
+                var sharedNode={};
+                var legendNode={};
+                graph.nodes.forEach(function(x) { 
+                    nodeMap[x.name] = x; 
+                    shared: x.shared
+                    classname=x.classname
+                    addlegend();
+                 });
+                graph.links = graph.links.map(function(x) {
+                  return {
+                    source: nodeMap[x.source],
+                    target: nodeMap[x.target],
+                    value: x.value,
+                    classname: x.classname,
+                    list_objects: x.list_objects
+                  };
+                 
             
+                });
+               
+              sankey
+                  .nodes(graph.nodes)
+                  .links(graph.links)
+                  .layout(32);
+                  
+                  
+             
+            // add in the links
+              var link = svg.append("g").selectAll(".link")
+                  .data(graph.links)
+                .enter().append("path")
+                  .attr("class", "link")
+                  .attr("d", path)
+                  .style("stroke", function(d){ 
+                  return colorMap[d.classname];
+                  return d3.rgb(colorMap[d.classname]);
+                  })
+                  .style("stroke-opacity", ".2")
+                  .style("stroke-width", function(d) { return Math.max(1, d.dy); })
+                  .sort(function(a, b) { return b.dy - a.dy; })
+                  .style('fill','none')
+                  .on("click",function(d){
+                    if (d3.event.defaultPrevented) return;
+                    //alert("clicked!"+d.value);
+                    ok_click=true;
+                    showobjects(d,ok_click);
+                    })
+                  ;
+             
+            // add the link titles
+              link.append("title")
+                    .text(function(d) {
+                    //ok=true;
+                    //showobjects(d,ok);
+                  	return d.source.name + " -> " + 
+                            d.target.name + "\n" + format(d.value); });
+             
+            // add in the nodes
+              var node = svg.append("g").selectAll(".node")
+                  .data(graph.nodes)
+                .enter().append("g")
+                  .attr("class", "node")
+                  .attr("transform", function(d) { 
+            		  return "translate(" + d.x + "," + d.y + ")"; })
+                    .call(d3.drag()
+                    .subject(function(d) {
+                      return d;
+                    })
+                    .on("start", function() {
+                      this.parentNode.appendChild(this);
+                    })
+                    .on("drag", dragmove));
             
+             
+            // add the rectangles for the nodes
+              node.append("rect")
+                  .attr("height", function(d) { return d.dy; })
+                  .attr("width", sankey.nodeWidth())      
+                  
+                  .style("fill", function (d) {
+                     console.log("d.shared",d.shared)
+                     if (d.shared=="true"){
+                     console.log("shared == true",d.shared)
+                     return "#8e9f00";//return "#f0f0f0";
+                     }
+                     else {
+                     return colorMap[d.numclass];
+                     }})
+                       .style("stroke", function (d) {
+                      return d3.rgb(d.color).darker(2);})
+                 
+            
+                  //.style("stroke-width", d => d.bordernode ? "4":"0")
+                .append("title")
+                  .text(function(d) { 
+            		  return d.name + "\n" + format(d.value); });
+             
+            // add in the title for the nodes
+              node.append("text")
+                  .attr("x", -6)
+                  .attr("y", function(d) { return d.dy / 2; })
+                  .attr("dy", ".35em")
+                  .attr("text-anchor", "end")
+                  .attr("transform", null)
+                  .text(function(d) { 
+                  name=d.name
+                  var res=name.charAt(0);
+                  if (res=='X') {
+                  legendnodes: legendNode[d.name];
+                  return d.name.slice(1);
+                  } else {
+                  name=d.name
+                  var res=name.slice(0,2);
+                  console.log("res=",res)
+                  if (res=="Cl"){
+                  name='C'.concat(name.slice(4));
+                  return name; }
+                  else {return d.name.slice(1)}}})
+                .filter(function(d) { return d.x < width / 2; })
+                  .attr("x", 6 + sankey.nodeWidth())
+                  .attr("text-anchor", "start");
+             
+            // show the objects of a cluster
+            function showobjects(d,ok_click){
+                    if (ok_click==true){
+                        d3.select("#objectlist").remove()
+                        namesource=d.source.name
+                        var res=namesource.charAt(0);
+                        if (res=='X') {
+                              namesource=namesource.slice(1);
+                        } else {
+                              var res=namesource.slice(0,2);
+                              console.log("res=",res)
+                              if (res=="Cl"){
+                              namesource='C'.concat(namesource.slice(4));
+                              }
+                        }      
+                        nametarget=d.target.name
+                        var res=nametarget.charAt(0);
+                        if (res=='X') {
+                              nametarget=nametarget.slice(1);
+                        } else {
+                              var res=nametarget.slice(0,2);
+                              console.log("res=",res)
+                              if (res=="Cl"){
+                              nametarget='C'.concat(nametarget.slice(4));
+                              }
+                        }    
+                        nametitle="Objects from ";
+                        nametitle=nametitle.concat(namesource);
+                        nametitle=nametitle.concat(" to ");
+                        nametitle=nametitle.concat(nametarget);
+                        nametitle=nametitle.concat(": ");
+                        nametitle=nametitle.concat(d.list_objects);
+                        console.log("nametitle",nametitle);
+                        d3.select('#myobjectplace').remove()
+                        d3.select('#objectplace').append('div').attr('id','myobjectplace')
+                            .append('p')
+                            .text(nametitle);
+            }};
+            
+            // adding a legend on top of the sankey
+            function addlegend(){
+            d3.select("#thelegend").remove()
+            var texte="This sankey shows the contents of the neural network from the input to the output. "
+            var texte2="Each axis represents a layer of the network. "
+            var texte3="Each color stands for a class, for instance the class 0 is in blue and it is the same for all the clusters of that class. Sometimes clusters are in grey. This means that they are shared between different classes."
+            var texte4="You can click on the links to see the node values."
+            var textlegend=texte+texte2+texte3+texte4
+            d3.select('#legend').append('div').attr('id','thelegend')
+                            .append('p')
+                            .text(textlegend);
+            };
+            
+            // the function for moving the nodes
+              function dragmove(d) {
+               d3.select(this).attr("transform", 
+                    "translate(" + (
+                    	   d.x ) + "," + (
+                               d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
+                        ) + ")");
+                sankey.relayout();
+                link.attr("d", path);
+              }
+            });
+        });
         });// dispatch all
     </script>
-    
-   <script>
 
-dispatch.on("sankeydiag", function(fileById) {
-                console.log("DISPATCH SELECT_MODEL");
-                console.log("fileById",fileById);
-                console.log("fileById.model",fileById.filename);
-   
- var units = "Objects";
 
-var margin = {top: 10, right: 10, bottom: 10, left: 10},
-    width = width_sankey - margin.left - margin.right,
-    height = heigh_sankey - margin.top - margin.bottom;
- 
-var formatNumber = d3.format(",.0f"),    // zero decimal places
-    format = function(d) { return formatNumber(d) + " " + units; },
-    //color = d3.scale.category20();
-    color = d3.scaleOrdinal(d3.schemeCategory10);
- 
-// append the svg canvas to the page
-var svg = d3.select("#area1").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", 
-          "translate(" + margin.left + "," + margin.top + ")");
-          
-const defs = svg.append('defs'); 
-// Set the sankey diagram properties
-var sankey = d3.sankey()
-    .nodeWidth(20)
-    .nodePadding(10)
-    .size([width, height]);
- 
-var path = sankey.link();
- 
-// load the data
-d3.json("/static/minst.json").then(function(graph) {
-    var nodeMap = {};
-    var colNode={};
-    graph.nodes.forEach(function(x) { 
-        nodeMap[x.name] = x; 
-        //colNode[x.name]=x.name.substring(0,1);
-     });
-    graph.links = graph.links.map(function(x) {
-      return {
-        source: nodeMap[x.source],
-        target: nodeMap[x.target],
-        value: x.value
-      };
-    });
- 
-  sankey
-      .nodes(graph.nodes)
-      .links(graph.links)
-      .layout(32);
- 
-// add in the links
-  var link = svg.append("g").selectAll(".link")
-      .data(graph.links)
-    .enter().append("path")
-      .attr("class", "link")
-      .attr("d", path)
-      .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-      .sort(function(a, b) { return b.dy - a.dy; })
-      .style('fill','none')
-      ;
- 
-// add the link titles
-  link.append("title")
-        .text(function(d) {
-      	return d.source.name + " → " + 
-                d.target.name + "\n" + format(d.value); });
- 
-// add in the nodes
-  var node = svg.append("g").selectAll(".node")
-      .data(graph.nodes)
-    .enter().append("g")
-      .attr("class", "node")
-      .attr("transform", function(d) { 
-		  return "translate(" + d.x + "," + d.y + ")"; })
-        .call(d3.drag()
-        .subject(function(d) {
-          return d;
-        })
-        .on("start", function() {
-          this.parentNode.appendChild(this);
-        })
-        .on("drag", dragmove));
-
- 
-// add the rectangles for the nodes
-  node.append("rect")
-      .attr("height", function(d) { return d.dy; })
-      .attr("width", sankey.nodeWidth())
-      .attr("border", function (d){
-      console.log(d.bordernode);
-      return d.border=d.bordernode;
-      })
-      .style("fill", function(d) { 
-        return d.color = d.colornode;})
-      .style("stroke", function(d) { 
-                 if (d.bordernode=="true"){
-                 return d3.rgb(d.color).darker(2) }})
-
-      .style("stroke-width", d => d.bordernode ? "4":"0")
-    .append("title")
-      .text(function(d) { 
-		  return d.name + "\n" + format(d.value); });
- 
-// add in the title for the nodes
-  node.append("text")
-      .attr("x", -6)
-      .attr("y", function(d) { return d.dy / 2; })
-      .attr("dy", ".35em")
-      .attr("text-anchor", "end")
-      .attr("transform", null)
-      .text(function(d) { return d.name; })
-    .filter(function(d) { return d.x < width / 2; })
-      .attr("x", 6 + sankey.nodeWidth())
-      .attr("text-anchor", "start");
- 
- 
- // add gradient to links
-  link.style('stroke', (d, i) => {
-    console.log('d from gradient stroke func', d);
-
-    // make unique gradient ids  
-    const gradientID = `gradient${i}`;
-
-    const startColor = d.source.color;
-    const stopColor = d.target.color;
-
-    console.log('startColor', startColor);
-    console.log('stopColor', stopColor);
-
-    const linearGradient = defs.append('linearGradient')
-        .attr('id', gradientID);
-
-    linearGradient.selectAll('stop') 
-      .data([                             
-          {offset: '10%', color: startColor },      
-          {offset: '90%', color: stopColor }    
-        ])                  
-      .enter().append('stop')
-      .attr('offset', d => {
-        console.log('d.offset', d.offset);
-        return d.offset; 
-      })   
-      .attr('stop-color', d => {
-        console.log('d.color', d.color);
-        return d.color;
-      });
-
-    return `url(#${gradientID})`;
-  })
- 
-// the function for moving the nodes
-  function dragmove(d) {
-   d3.select(this).attr("transform", 
-        "translate(" + (
-        	   d.x ) + "," + (
-                   d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
-            ) + ")");
-    sankey.relayout();
-    link.attr("d", path);
-  }
-});
-
-});// dispatch sankey
- 
-</script>
-	
 </body>
-
-
-</html>
-
