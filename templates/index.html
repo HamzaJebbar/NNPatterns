@@ -255,7 +255,7 @@ var sankey = d3.sankey()
 var path = sankey.link();
  
 // load the data
-d3.json("/static/mnist.json").then(function(graph) {
+d3.json("/static/VTmnist.json").then(function(graph) {
     console.log("cluster",graph)
     var nodeMap = {};
     var colNode={};
@@ -447,7 +447,7 @@ var sankey = d3.sankey()
 var path = sankey.link();
  
 // load the data
-d3.json("/static/VTminst.json").then(function(graph) {
+d3.json("/static/minst.json").then(function(graph) {
     var nodeMap = {};
     var colNode={};
     graph.nodes.forEach(function(x) { 
