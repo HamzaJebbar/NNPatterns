@@ -29,13 +29,12 @@ layer1,layer2,layer3, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_
 VTlayer1,VTlayer2,VTlayer3, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv",10)
 
 # mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
-
 #mnist
 layers = []
 
-layers.append(strTolist(layer1))
-layers.append(strTolist(layer2))
-layers.append(strTolist(layer3))
+layers.append(layer1)
+layers.append(layer2)
+layers.append(layer3)
 
 ##VTmnist
 
@@ -58,23 +57,29 @@ VTlayers.append(strTolist(VTlayer3))
 ########## KMEANS
 ##mnist
 
-clusters,models = p.kmModel(layers,4)
+clusters,models = p.kmModel(layers,8)
 pourcentages_mnist = pourcentages(clusters,y)
-clusters_classe0, clusters_classe1 = elimination(pourcentages_mnist,10)
-tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
-plot2D_on_all_layers("mnist",layers,clusters,y)
+clusters_layers = elimination(pourcentages_mnist,2)
 
-##VTmnist
+
+
+tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_layers,y)
+# plot2D_on_all_layers("mnist",layers,clusters,y)
+
+# ##VTmnist
 
 VTclusters= p.kmPredict(VTlayers,models)
 VTpourcentages_mnist = pourcentages(VTclusters,VTy)
-VTclusters_classe0, VTclusters_classe1 = elimination(VTpourcentages_mnist,10)
-VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_classe0,VTclusters_classe1,VTy)
-plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
+VTclusters_layers = elimination(VTpourcentages_mnist,5)
+
+
+
+VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_layers,VTy,True)
+# plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
 with open ("static/mnist.json","w") as f:
 	json.dump({"links":tab,"nodes":nodes},f)
 with open ("static/VTmnist.json","w") as f:
-	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
+ 	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
 app = Flask(__name__)
 app.static_url_path='/static'
 
@@ -83,4 +88,3 @@ def home():
 	return render_template("index.html")
 if __name__ == "__main__":
 	app.run(debug=True)
-

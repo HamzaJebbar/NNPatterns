@@ -301,29 +301,25 @@ def sans_doublons(liste) :
 
 
 def pourcentages_inter (clusters_of_layer,y) :
-    class0 = {} 
-    class1 = {}
+    y_prime = list(set(y))
+    clust_dic = {}
     clusters = {}
     for i in range(len(y)) :
-        #print(type(y[i]))
-        if y[i] == 0 : 
-            #print("hey ",clusters_of_layer[i])
-            if str(clusters_of_layer[i]) in class0 : class0[str(clusters_of_layer[i])] += 1 
-            else : class0[str(clusters_of_layer[i])] = 1
-        if y[i] == 1 : 
-            #print("hey ",clusters_of_layer[i])
-            if str(clusters_of_layer[i]) in class1 : class1[str(clusters_of_layer[i])] += 1
-            else : class1[str(clusters_of_layer[i])] = 1
+        if str(y[i]) not in clust_dic:
+            clust_dic[str(y[i])] = {}
+
+        if str(clusters_of_layer[i]) in clust_dic[str(y[i])] : 
+            clust_dic[str(y[i])][str(clusters_of_layer[i])] += 1
+        else : 
+            clust_dic[str(y[i])][str(clusters_of_layer[i])] = 1
           
         if str(clusters_of_layer[i]) in clusters : clusters[str(clusters_of_layer[i])] += 1
         else : clusters[str(clusters_of_layer[i])] = 1
     for key in clusters : 
-        if key in class0 : class0[key] = round(class0[key]/clusters[key] *100 , 3)
-        if key in class1 : class1[key] = round(class1[key]/clusters[key] * 100 , 3)
-    res = [] 
-    res.append(class0)
-    res.append(class1)
-    return res
+        for i in y_prime:
+            if key in clust_dic[str(i)]:
+                clust_dic[str(i)][key] = round(clust_dic[str(i)][key]/clusters[key] *100,3)
+    return clust_dic
         
 '''
 pourcentage .append retour dial la fonction li lfo9 
@@ -376,28 +372,46 @@ def signatures_clusters(filename,clusters,y) :
 
 	
 def elimination(pourcentages,threshold) :
-	clusters_classe0 = []
-	clusters_classe1 = []
-	for i in range(len(pourcentages)) :
-		for j in range(2) :
-			clusters = []
-			for key in pourcentages[i][j] :
-				if(pourcentages[i][j][key]>=threshold) :
-					clusters.append(key)
-			if(j==0) : clusters_classe0.append(clusters)
-			else : clusters_classe1.append(clusters)
-	return clusters_classe0, clusters_classe1
+    clust_dic = {}
+    for i in range(len(pourcentages)):
+        for key in pourcentages[i]:
+            if key not in clust_dic:
+                clust_dic[key] = []
+            clusters = []
+            for clust in pourcentages[i][key]:
+                if pourcentages[i][key][clust]>=threshold:
+                    clusters.append(clust)
+            clust_dic[key].append(clusters)
+    return clust_dic
 
 def sort_key(dic):
     return dic["source"]
 def sort_key_C(dic):
     return dic["target"]
 
-def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) :
+def shared_clusters(clusters_classes) :
+    shared_clust = []
+    classes = list(clusters_classes.keys())
+    for i in range(len(clusters_classes[classes[0]])):
+        shared_clust.append(list([]))
+    for i in range(0,len(classes)-1) :
+        for k in range(len(clusters_classes[classes[i]])) :
+            '''shared_clust_layer = []'''
+            for h in range(len(clusters_classes[classes[i]][k])) :
+                cluster = clusters_classes[classes[i]][k][h]
+                for j in range(i+1,len(classes)) :
+                    if((cluster in clusters_classes[classes[j]][k]) and (cluster not in shared_clust[k])):
+                        shared_clust[k].append(cluster)
+    return shared_clust
+
+
+def signatures_clusters2(filename,clusters,clusters_classes,y,VT=False) :
+    classes = list(clusters_classes.keys())
+    shared_c = shared_clusters(clusters_classes)
+    print(shared_c)
     tab = []
     nodes = []
     tab_nodes= []
-    colors = {0:"blue",1:"red"}
     f = open(filename, "w")
     nb_layers = len(clusters)
     for i in range(len(y)) :
@@ -406,17 +420,34 @@ def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) 
         for j in range(nb_layers) :
             c = "C"+str(j)+str(clusters[j][i])
             k=0
+            numclass = ""
+            shared = ""
+            if(s[0]=="X"):
+                if VT :
+                    numclass = "C11"
+                else :
+                    numclass = "C"+s[1]
+                shared = "false"
+            else:
+                shared = str(str(clusters[j-1][i]) in shared_c[j-1]).lower()
+                for m in range(len(classes)):
+                    if(s[2:] in clusters_classes[classes[m]][j-1]):
+                        numclass = "C"+classes[m]
             if s not in tab_nodes:
                 tab_nodes.append(s)
-                nodes.append({"name":s,"colornode":colors[y[i]],"bordernode":"true"})
+                nodes.append({"name":s,"numclass":numclass,"shared":shared})
+            if VT : 
+                y_vt = "C11"
+            else :
+                y_vt = "C"+str(y[i])
             while k < len(tab):
                 if tab[k]["source"]==s and tab[k]["target"] == c:
-                    tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1))})
+                    tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1)),"numclass":y_vt})
                     break
                 k+=1
             if k == len(tab):
-                tab.append({"source":s,"target":c,"value":str(1)})
-
+                tab.append({"source":s,"target":c,"value":str(1),"numclass":y_vt})
+                '''
             signature += "L"+str(j+1)+":";
             signature += "C"+str(clusters[j][i])
             signature += "("
@@ -427,24 +458,33 @@ def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) 
             elif (str(clusters[j][i]) in clusters_classe1[j]) : 
                 signature += "1"
             signature += "),"
+            '''
             s = c
         c =  str(y[i])
         k=0
+        numclass = ""   
+        shared = str(str(clusters[j][i]) in shared_c[j]).lower()
+        for m in range(len(classes)):
+            if(s[2:] in clusters_classes[classes[m]][j]):
+                numclass = "C"+classes[m]
         if s not in tab_nodes:
             tab_nodes.append(s)
-            nodes.append({"name":s,"colornode":colors[y[i]],"bordernode":"true"})
-
+            nodes.append({"name":s,"numclass":numclass,"shared":shared})
+        if VT : 
+            y_vt = "C11"
+        else :
+            y_vt = "C"+str(y[i])
         while k < len(tab):
             if tab[k]["source"]==s and tab[k]["target"] == c:
-                tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1))})
+                tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1)),"numclass":y_vt})
                 break
             k+=1
         if k == len(tab):
-            tab.append({"source":s,"target":c,"value":str(1)})
+            tab.append({"source":s,"target":c,"value":str(1),"numclass":y_vt})
         signature += '\n'
         f.write(signature)
-    nodes.append({"name":"0","colornode":colors[0],"bordernode":"true"})
-    nodes.append({"name":"1","colornode":colors[1],"bordernode":"true"})
+    nodes.append({"name":"0","numclass":"C0","shared":"false"})
+    nodes.append({"name":"1","numclass":"C1","shared":"false"})
     f.close()
     return tab,nodes
 
