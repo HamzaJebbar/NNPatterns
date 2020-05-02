@@ -178,89 +178,93 @@ def makes_Layers(filename,bins=0,disc=False) :
     # disc_X,y = pandas_core_frame_DataFrame_to_list(ds)
     name = filename.split("/")
     name = name[-1].split("_")[1:-1]
-    X,y = readXy(filename)
+    disc_X,y = readXy(filename)
     layers = []
-    k=0
-    i = 1
-    j = -1
-    while(i<len(name)):
-        if i==1:
-            layers.append(X[:int(name[i])])
-        else:
-            layers.append(X[int(name[j]):int(name[i])])
-        print(len(layers[k]))
-        k+=1
+    i=1
+    while i<len(name):
+        layer = []
+        if i == 1:
+            ma = int(name[i])
+            for X in disc_X:
+                layer.append(X[:ma])
+        else :
+            mi = ma
+            ma += int(name[i])
+            for X in disc_X:
+                layer.append(X[mi:ma])
+        layers.append(layer)
         i+=2
-        j+=2
-    #print('disc_X\n\n',disc_X,'\n\n')
-    if filename[0] == 'i' : # separation par layers de iris
-        layer1 = []
-        layer2 = []
-        layer3 = []
-        '''
-        y1 = []
-        y2 = []
-        y3 = []
-        passe = True
-        '''
-        for x in disc_X :
-            layer1.append(x[:8])
-            layer2.append(x[8:18]) 
-            layer3.append(x[18:])
-            '''
-            if passe : 
-                y1 = y[:8]
-                y2 = y[8:18]
-                y3 = y[18:]
-                passe = False
-            '''
-        return layer1,layer2,layer3,y
-    else :
-        if filename[0] == 'm' and filename[1]=='a' :
-            layer1 = []
-            layer2 = []
-            layer3 = []
-            layer4 = []
-            '''
-            y1 = []
-            y2 = []
-            y3 = []
-            y4 = []
-            '''
-            for x in disc_X :
-                layer1.append(x[:3])
-                layer2.append(x[3:13])
-                layer3.append(x[13:23])
-                layer4.append(x[23:])
-                '''
-                if passe :
-                    y1 = y[:3]
-                    y2 = y[3:13]
-                    y3 = y[13:23]
-                    y4 = y[23:]
-                    passe = False
-                '''
-            return layer1,layer2,layer3,layer4,y
-        else : 
-            layer1 = []
-            layer2 = []
-            layer3 = []
-            #y1 = []
-            #y2 = []
-            #y3 = []
-            for x in disc_X :
-                layer1.append(x[:64])
-                layer2.append(x[64:96])
-                layer3.append(x[96:112])
-                '''
-                if passe : 
-                    y1 = y[:64]
-                    y2 = y[64:96]
-                    y3 = y[96:112]
-                    passe = False
-                '''
-            return layer1,layer2,layer3,y
 
+
+    #print('disc_X\n\n',disc_X,'\n\n')
+    # if filename[0] == 'i' : # separation par layers de iris
+    #     layer1 = []
+    #     layer2 = []
+    #     layer3 = []
+    #     '''
+    #     y1 = []
+    #     y2 = []
+    #     y3 = []
+    #     passe = True
+    #     '''
+    #     for x in disc_X :
+    #         layer1.append(x[:8])
+    #         layer2.append(x[8:18]) 
+    #         layer3.append(x[18:])
+    #         '''
+    #         if passe : 
+    #             y1 = y[:8]
+    #             y2 = y[8:18]
+    #             y3 = y[18:]
+    #             passe = False
+    #         '''
+    #     return layer1,layer2,layer3,y
+    # else :
+    #     if filename[0] == 'm' and filename[1]=='a' :
+    #         layer1 = []
+    #         layer2 = []
+    #         layer3 = []
+    #         layer4 = []
+    #         '''
+    #         y1 = []
+    #         y2 = []
+    #         y3 = []
+    #         y4 = []
+    #         '''
+    #         for x in disc_X :
+    #             layer1.append(x[:3])
+    #             layer2.append(x[3:13])
+    #             layer3.append(x[13:23])
+    #             layer4.append(x[23:])
+    #             '''
+    #             if passe :
+    #                 y1 = y[:3]
+    #                 y2 = y[3:13]
+    #                 y3 = y[13:23]
+    #                 y4 = y[23:]
+    #                 passe = False
+    #             '''
+    #         return layer1,layer2,layer3,layer4,y
+    #     else : 
+    #         layer1 = []
+    #         layer2 = []
+    #         layer3 = []
+    #         #y1 = []
+    #         #y2 = []
+    #         #y3 = []
+    #         for x in disc_X :
+    #             layer1.append(x[:64])
+    #             layer2.append(x[64:96])
+    #             layer3.append(x[96:112])
+    #             '''
+    #             if passe : 
+    #                 y1 = y[:64]
+    #                 y2 = y[64:96]
+    #                 y3 = y[96:112]
+    #                 passe = False
+    #             '''
+    #         return layer1,layer2,layer3,y
+    return layers,y
 def distance (sig1,sig2) : # special sig1 == sig2
     dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
     for x in range(len(sig1)) :
@@ -407,10 +411,6 @@ def elimination(pourcentages,threshold) :
 	# 		else : clusters_classe1.append(clusters)
     return clust_dic
 
-def sort_key(dic):
-    return dic["source"]
-def sort_key_C(dic):
-    return dic["target"]
 
 def signatures_clusters2(filename,clusters,clusters_classe0,clusters_classe1,y) :
     tab = []

@@ -25,17 +25,17 @@ import json
 # Histogram(encrypting_X_0,"mnist0.png")
 
 #def loadData():
-layer1,layer2,layer3, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
+# layer1,layer2,layer3, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
+layers, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
 # VTlayer1,VTlayer2,VTlayer3, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv",10)
 
 # mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
 #mnist
-layers = []
+# layers = []
 
-layers.append(layer1)
-layers.append(layer2)
-layers.append(layer3)
-
+# layers.append(layer1)
+# layers.append(layer2)
+# layers.append(layer3)
 ##VTmnist
 
 # VTlayers = []
@@ -56,10 +56,10 @@ layers.append(layer3)
 
 ########## KMEANS
 ##mnist
-
-clusters,models = p.kmModel(layers,8)
+clusters,models = p.kmModel(layers,9)
 pourcentages_mnist = pourcentages(clusters,y)
 clusters_layers = elimination(pourcentages_mnist,10)
+print(clusters_layers)
 # tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_classe0,clusters_classe1,y)
 # plot2D_on_all_layers("mnist",layers,clusters,y)
 
