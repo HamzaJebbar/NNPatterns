@@ -110,6 +110,7 @@ def save_result_layers(filename,X,y,result_layers):
 # os.system ('sort iris_8_10_8_tmp > iris_8_10_8_.csv')
 # # effacer le fichier intermédiaire
 # os.system ('rm iris_8_10_8_tmp')
+'''
 X, y = make_moons(n_samples=1000, noise=0.05, random_state=0)
 
 validation_size=0.6 #40% du jeu de données pour le test
@@ -154,10 +155,11 @@ save_result_layers("makemoons_3_10_10_3_tmp",X_good,y_good,result_layers)
 os.system ('sort makemoons_3_10_10_3_tmp > makemoons_3_10_10_3_.csv')
 # effacer le fichier intermédiaire
 os.system ('rm makemoons_3_10_10_3_tmp')
-
+'''
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 X_train_sample=X_train[0:2000]
 y_train_sample=y_train[0:2000]
+print(list(dict.fromkeys(y_train_sample)))
 
 X_train=X_train_sample
 y_train=y_train_sample
@@ -172,19 +174,19 @@ nb_X=0
 X_2 = []
 y_2 = []
 for i in range(X_train.shape[0]):
-    if (y_train[i]==0 or y_train[i]==1):
+    if (y_train[i]>=0 and y_train[i]<=8):
         
         nb_X+=1
         X_01.append(X_train[i])
         y_01.append(y_train[i])
-    if y_train[i]==2 :
+    if y_train[i]==9 :
         X_2.append(X_train[i])
 
-
+# X_01 = X_train
+# y_01 = y_train
 train_X=np.asarray(X_01)
 X_2np = np.asarray(X_2)
 train_y=y_01
-
 encoder = LabelEncoder()
 train_y=encoder.fit_transform(train_y)
 
@@ -194,24 +196,24 @@ model = Sequential()
 model.add(Dense(64, input_dim = input_dim , activation = 'relu'))
 model.add(Dense(32, activation = 'relu'))
 model.add(Dense(16, activation = 'relu'))
-model.add(Dense(1, activation = 'sigmoid'))
+model.add(Dense(len(list(set(train_y))), activation = 'softmax'))
 
-model.compile(loss = 'binary_crossentropy' , optimizer = 'adam' , metrics = ['accuracy'] )
+model.compile(loss = 'sparse_categorical_crossentropy' , optimizer = 'adam' , metrics = ['accuracy'] )
 
 model.fit(train_X, train_y, epochs = 40, batch_size = 32)
 
 X_good,y_good=get_goodXy (train_X, train_y)
-# # Récupération des valeurs de tous les layers sauf le dernier
+print(list(set(y_01)))
+# Récupération des valeurs de tous les layers sauf le dernier
 result_layers=get_result_layers(model,X_good)
 
-## traitement de la classe 2
+# # traitement de la classe 2
 y_2 = model.predict_classes(X_2np)
-y_2 = [y_2[i][0] for i in range(len(y_2))]
 result2_layers=get_result_layers(model,X_2)
 save_result_layers("VTmnist_64_32_16_tmp",X_2,y_2,result2_layers)
-# # tri du fichier
+# tri du fichier
 os.system ('sort VTmnist_64_32_16_tmp > VTmnist_64_32_16_.csv')
-# # effacer le fichier intermédiaire
+# effacer le fichier intermédiaire
 os.system ('rm VTmnist_64_32_16_tmp')
 
 
@@ -227,12 +229,12 @@ os.system ('sort mnist_64_32_16_tmp > mnist_64_32_16_.csv')
 os.system ('rm mnist_64_32_16_tmp')
 
 
-#Create a directory with a specific file for all the layers
+# Create a directory with a specific file for all the layers
 # filename="iris_8_10_8_.csv"    
 # get_directory_layers_from_csv(filename)    
 
-filename='makemoons_3_10_10_3_.csv'
-get_directory_layers_from_csv(filename) 
+# filename='makemoons_3_10_10_3_.csv'
+# get_directory_layers_from_csv(filename) 
 
 filename='mnist_64_32_16_.csv'
 get_directory_layers_from_csv(filename) 

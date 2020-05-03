@@ -24,26 +24,11 @@ import json
 # Histogram(encrypting_X_1,"mnist1.png")
 # Histogram(encrypting_X_0,"mnist0.png")
 
-#def loadData():
-layer1,layer2,layer3, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv",10)
-VTlayer1,VTlayer2,VTlayer3, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv",10)
+# Load Data:
+layers, y = makes_Layers("mnist_64_32_16_/mnist_l1_64_l2_32_l3_16_.csv")
+VTlayers, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv")
 
 # mat_dist1 = matrice_distances(mnlayer) #layer1 -> mnlayer1
-#mnist
-layers = []
-
-layers.append(layer1)
-layers.append(layer2)
-layers.append(layer3)
-
-##VTmnist
-
-VTlayers = []
-
-VTlayers.append(strTolist(VTlayer1))
-VTlayers.append(strTolist(VTlayer2))
-VTlayers.append(strTolist(VTlayer3))
-
 
 ######### DBSCAN
 
@@ -55,31 +40,31 @@ VTlayers.append(strTolist(VTlayer3))
 # print(p.dbscan_predict(clusters[2],strTolist(layer3)))
 
 ########## KMEANS
-##mnist
+## mnist
 
 clusters,models = p.kmModel(layers,8)
 pourcentages_mnist = pourcentages(clusters,y)
 clusters_layers = elimination(pourcentages_mnist,2)
 
+tab,nodes = signatures_clusters(clusters,clusters_layers,y)
+plot2D_on_all_layers("mnist",layers,clusters,y)
 
-
-tab,nodes = signatures_clusters2("mnist_clusters.csv",clusters,clusters_layers,y)
-# plot2D_on_all_layers("mnist",layers,clusters,y)
-
-# ##VTmnist
+## VTmnist
 
 VTclusters= p.kmPredict(VTlayers,models)
 VTpourcentages_mnist = pourcentages(VTclusters,VTy)
 VTclusters_layers = elimination(VTpourcentages_mnist,5)
 
+VT_tab,VT_nodes = signatures_clusters(VTclusters,VTclusters_layers,VTy,True)
+plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
 
-
-VT_tab,VT_nodes = signatures_clusters2("VTmnist_clusters.csv",VTclusters,VTclusters_layers,VTy,True)
-# plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
+# Generating JSON file
 with open ("static/mnist.json","w") as f:
 	json.dump({"links":tab,"nodes":nodes},f)
 with open ("static/VTmnist.json","w") as f:
  	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
+
+# Lunching Flask server
 app = Flask(__name__)
 app.static_url_path='/static'
 

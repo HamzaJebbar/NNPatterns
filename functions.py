@@ -91,7 +91,7 @@ def discretise_dataset(filename,bins):
     print(df_new)
     return df_new
 
-## Lire le fichier contenant les valeurs et les transformer en String
+## Read the signatures from the file
 def readXy(filename):
     f = open(filename, "r")
     matrice = f.read().split('\n')
@@ -105,6 +105,7 @@ def readXy(filename):
         X.append(list(np.array(tab[1:]).astype("float32")))
     return X,y
 
+## Drawing and saving the Histogram
 def Histogram(X,histname):
     fig = plt.hist(X)
     fig = plt.gcf()
@@ -114,9 +115,7 @@ def Histogram(X,histname):
     plt.ylabel('Frequency')
     plt.savefig(histname)
     plt.clf()
-
-
-'''version signature : value'''
+''' ## NO LONGER USED ##: Intermediate function for encrypting string signature
 def encrypting_signature_value(X_) : # param X_ est X_1_0
     listOfX_ = []
     encrypting_X_ = {}
@@ -129,15 +128,16 @@ def encrypting_signature_value(X_) : # param X_ est X_1_0
     #print(listOfX_)
     return encrypting_X_ # returns a dict of 'signature : value'
 
-
+## NO LONGER USED ##: Encrypting String signature 
 def X_to_encrypted_X(X_,encrypting_signature_value) : # X_ : signatures of a certain class , encrypting_signature_value : the global variable in this code
     listOfX = []
     for x in range(len(X_)) :
         #if not(encrypting_signature_value[str(X_[x])] in listOfX) :
         listOfX.append(encrypting_signature_value[str(X_[x])])
     return listOfX #returns the X_ crypted
+'''
 
-
+## Df to List
 def pandas_core_frame_DataFrame_to_list(df) :
     X = []
     y_ = []
@@ -150,7 +150,7 @@ def pandas_core_frame_DataFrame_to_list(df) :
         X.append(x)
     return X,y_
 
-
+''' ## NO LONGER USED## : Generating Histograms for Iris Data
 def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should be the file in param
     for x in range(len(bins)) : 
         df,b=discretise_dataset("iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv",bins[x]) 
@@ -169,84 +169,31 @@ def hists_files(file,bins) : # "iris_8_10_8_/iris_l1_8_l2_10_l3_8_.csv" should b
 
         Histogram(enc_X_1_,name_of_pngHist_class1)
         Histogram(enc_X_0_,name_of_pngHist_class0)
-
-        
-
-def makes_Layers(filename,bins=0,disc=False) :
-    # ds = discretise_dataset(filename,bins)
-    # #print("les bins ",b)
-    # disc_X,y = pandas_core_frame_DataFrame_to_list(ds)
+'''
+      
+## Read the file and generate a list of signatures for each layer
+def makes_Layers(filename) :
+    name = filename.split("/")
+    name = name[-1].split("_")[1:-1]
     disc_X,y = readXy(filename)
+    layers = []
+    i=1
+    while i<len(name):
+        layer = []
+        if i == 1:
+            ma = int(name[i])
+            for X in disc_X:
+                layer.append(X[:ma])
+        else :
+            mi = ma
+            ma += int(name[i])
+            for X in disc_X:
+                layer.append(X[mi:ma])
+        layers.append(layer)
+        i+=2
+    return layers,y
 
-    #print('disc_X\n\n',disc_X,'\n\n')
-    if filename[0] == 'i' : # separation par layers de iris
-        layer1 = []
-        layer2 = []
-        layer3 = []
-        '''
-        y1 = []
-        y2 = []
-        y3 = []
-        passe = True
-        '''
-        for x in disc_X :
-            layer1.append(x[:8])
-            layer2.append(x[8:18]) 
-            layer3.append(x[18:])
-            '''
-            if passe : 
-                y1 = y[:8]
-                y2 = y[8:18]
-                y3 = y[18:]
-                passe = False
-            '''
-        return layer1,layer2,layer3,y
-    else :
-        if filename[0] == 'm' and filename[1]=='a' :
-            layer1 = []
-            layer2 = []
-            layer3 = []
-            layer4 = []
-            '''
-            y1 = []
-            y2 = []
-            y3 = []
-            y4 = []
-            '''
-            for x in disc_X :
-                layer1.append(x[:3])
-                layer2.append(x[3:13])
-                layer3.append(x[13:23])
-                layer4.append(x[23:])
-                '''
-                if passe :
-                    y1 = y[:3]
-                    y2 = y[3:13]
-                    y3 = y[13:23]
-                    y4 = y[23:]
-                    passe = False
-                '''
-            return layer1,layer2,layer3,layer4,y
-        else : 
-            layer1 = []
-            layer2 = []
-            layer3 = []
-            #y1 = []
-            #y2 = []
-            #y3 = []
-            for x in disc_X :
-                layer1.append(x[:64])
-                layer2.append(x[64:96])
-                layer3.append(x[96:112])
-                '''
-                if passe : 
-                    y1 = y[:64]
-                    y2 = y[64:96]
-                    y3 = y[96:112]
-                    passe = False
-                '''
-            return layer1,layer2,layer3,y
-
+''' ## NO LONGER USED ##: Levenshtein distance
 def distance (sig1,sig2) : # special sig1 == sig2
     dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
     for x in range(len(sig1)) :
@@ -283,6 +230,7 @@ def distance (sig1,sig2) : # special sig1 == sig2
                 dist[x][x] = min(dist[x][x-1],dist[x-1][x],dist[x-1][x-1]) + 1
     return dist[x][x]
 
+## NO LONGER USED ##: Matrix of distances
 def matrice_distances(layer) :
     matrice = []
     for x in range(len(layer)) : 
@@ -292,14 +240,8 @@ def matrice_distances(layer) :
         matrice.append(mat)
     return matrice
 
-
-def sans_doublons(liste) :
-    l = []
-    for x in range(len(liste)) :
-        if not(liste[x] in l) : l.append(liste[x])
-    return l
-
-
+'''
+## Percentage of every cluster in one layer
 def pourcentages_inter (clusters_of_layer,y) :
     y_prime = list(set(y))
     clust_dic = {}
@@ -320,57 +262,15 @@ def pourcentages_inter (clusters_of_layer,y) :
             if key in clust_dic[str(i)]:
                 clust_dic[str(i)][key] = round(clust_dic[str(i)][key]/clusters[key] *100,3)
     return clust_dic
-        
-'''
-pourcentage .append retour dial la fonction li lfo9 
-layers y 
-for 3la layers 
-pourcentage.append(f)
-'''
 
+## pourcentages_inter applied on all layers     
 def pourcentages(clusters , y) :
     res = []
     for x in range(len(clusters)) :
         res.append(pourcentages_inter(clusters[x],y))
     return res
 
-
-def strTolist(tab):
-    l = []
-    for i in range(len(tab)):
-        sign = []
-        for j in range(len(tab[i])):
-            sign.append((float)(tab[i][j]))
-        l.append(sign)
-    return l
-
-def clustering(layers,lv=True) :
-    clustering = []
-    for i in range(len(layers)):
-        # print("Layer"+str(i))
-        if lv==True:
-            mat_dist = matrice_distances(layers[i])
-            print("Matrice de distance done")
-            mat_dist = np.array(mat_dist).astype("float32")
-            cluster = DBSCAN(eps=1, min_samples=2,metric='precomputed').fit(mat_dist)
-        else:
-            cluster = DBSCAN(eps=1, min_samples=2).fit(strTolist(layers[i]))
-        print("DBSCAN DONE")
-        clustering.append(cluster)
-    return clustering
-def signatures_clusters(filename,clusters,y) :
-	f = open(filename, "w")
-	nb_layers = len(clusters)
-	for i in range(len(y)) :
-		signature = ""+str(y[i])+","
-		for j in range(nb_layers) :
-			signature += "L"+str(j+1)+":";
-			signature += "C"+str(clusters[j].labels_[i])+","
-		signature += '\n'
-		f.write(signature)
-	f.close()
-
-	
+## removing clusters with a percentage lowen than threshold	
 def elimination(pourcentages,threshold) :
     clust_dic = {}
     for i in range(len(pourcentages)):
@@ -384,11 +284,7 @@ def elimination(pourcentages,threshold) :
             clust_dic[key].append(clusters)
     return clust_dic
 
-def sort_key(dic):
-    return dic["source"]
-def sort_key_C(dic):
-    return dic["target"]
-
+## identify the clusters that belong to many classes
 def shared_clusters(clusters_classes) :
     shared_clust = []
     classes = list(clusters_classes.keys())
@@ -404,18 +300,19 @@ def shared_clusters(clusters_classes) :
                         shared_clust[k].append(cluster)
     return shared_clust
 
-
-def signatures_clusters2(filename,clusters,clusters_classes,y,VT=False) :
+## Generate the JSON file required by html page
+def signatures_clusters(clusters,clusters_classes,y,VT=False) :
     classes = list(clusters_classes.keys())
     shared_c = shared_clusters(clusters_classes)
-    print(shared_c)
     tab = []
     nodes = []
     tab_nodes= []
-    f = open(filename, "w")
     nb_layers = len(clusters)
     for i in range(len(y)) :
-        s = "X"+str(y[i])
+        if VT :
+            s = "X11"
+        else :
+            s = "X"+str(y[i])
         signature = ""+str(y[i])+","
         for j in range(nb_layers) :
             c = "C"+str(j)+str(clusters[j][i])
@@ -447,18 +344,6 @@ def signatures_clusters2(filename,clusters,clusters_classes,y,VT=False) :
                 k+=1
             if k == len(tab):
                 tab.append({"source":s,"target":c,"value":str(1),"numclass":y_vt})
-                '''
-            signature += "L"+str(j+1)+":";
-            signature += "C"+str(clusters[j][i])
-            signature += "("
-            if((str(clusters[j][i]) in clusters_classe0[j]) and (str(clusters[j][i]) in clusters_classe1[j])) : 
-                signature += "0,1"
-            elif (str(clusters[j][i]) in clusters_classe0[j]) : 
-                signature += "0"
-            elif (str(clusters[j][i]) in clusters_classe1[j]) : 
-                signature += "1"
-            signature += "),"
-            '''
             s = c
         c =  str(y[i])
         k=0
@@ -482,11 +367,17 @@ def signatures_clusters2(filename,clusters,clusters_classes,y,VT=False) :
         if k == len(tab):
             tab.append({"source":s,"target":c,"value":str(1),"numclass":y_vt})
         signature += '\n'
-        f.write(signature)
-    nodes.append({"name":"0","numclass":"C0","shared":"false"})
-    nodes.append({"name":"1","numclass":"C1","shared":"false"})
-    f.close()
+    for t in classes:
+        print(t)
+        nodes.append({"name":t,"numclass":"C"+str(t),"shared":"false"})
     return tab,nodes
+
+## Plot Functions
+def sans_doublons(liste) :
+    l = []
+    for x in range(len(liste)) :
+        if not(liste[x] in l) : l.append(liste[x])
+    return l
 
 def keeps_clear_colors(colors) : 
     c = []
