@@ -42,9 +42,9 @@ VTlayers, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv")
 ########## KMEANS
 ## mnist
 
-clusters,models = p.kmModel(layers,8)
+clusters,models = p.kmModel(layers,5)
 pourcentages_mnist = pourcentages(clusters,y)
-clusters_layers = elimination(pourcentages_mnist,2)
+clusters_layers = elimination(pourcentages_mnist,10)
 
 tab,nodes = signatures_clusters(clusters,clusters_layers,y)
 plot2D_on_all_layers("mnist",layers,clusters,y)

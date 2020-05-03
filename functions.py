@@ -282,11 +282,13 @@ def elimination(pourcentages,threshold) :
                 if pourcentages[i][key][clust]>=threshold:
                     clusters.append(clust)
             clust_dic[key].append(clusters)
+
     return clust_dic
 
 ## identify the clusters that belong to many classes
 def shared_clusters(clusters_classes) :
     shared_clust = []
+    clust_class = []
     classes = list(clusters_classes.keys())
     for i in range(len(clusters_classes[classes[0]])):
         shared_clust.append(list([]))
@@ -368,7 +370,6 @@ def signatures_clusters(clusters,clusters_classes,y,VT=False) :
             tab.append({"source":s,"target":c,"value":str(1),"numclass":y_vt})
         signature += '\n'
     for t in classes:
-        print(t)
         nodes.append({"name":t,"numclass":"C"+str(t),"shared":"false"})
     return tab,nodes
 
