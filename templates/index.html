@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta meta="viewport" content="width=device-width,initial-scale=1">
-<title>Pattern Signatures for Deep Neural Networks</title>
+<title>Signatures des réseaux de neurones</title>
 <style>
 
 body {
@@ -49,7 +49,7 @@ font-weight:bold;
 
         <!-- Template of the page -->
         <!-- title -->
-        <h1>Pattern Signatures</h1>
+        <h1>Signatures des réseaux de neurones</h1>
         <!-- Select the dataset -->
         <div id='dataset'></div>
 
@@ -131,12 +131,14 @@ font-weight:bold;
                   // remove if already exist
                    d3.select("#mytable").remove()
                    d3.select("#myp").remove()
+                   /*
                   var mytable = d3.select("#model")
                         .append('p').attr("id","myp").text("The associated model:").attr("font-weight",15)
                         .append("table").attr("id","mytable")
                         .style("border-collapse", "collapse")
-                        .style("border", "2px black solid");                  
-                  // header       
+                        .style("border", "2px black solid");  */               
+                  // header 
+                  /*      
                   mytable.append("thead").append("tr")
                              .selectAll("th")
                             .data(parsedCSV[0])
@@ -146,10 +148,10 @@ font-weight:bold;
                               .style("padding", "5px")
                               .style("background-color", "lightgray")
                              .style("font-weight", "bold")
-                             .style("text-transform", "uppercase");
+                             .style("text-transform", "uppercase");*/
   
                    // table       
-                   mytable.selectAll("tr")
+                   /*mytable.selectAll("tr")
                       .data(parsedCSV).enter()
                       .append("tr")
                        .selectAll("td")
@@ -157,7 +159,7 @@ font-weight:bold;
                        .append("td")
                        .style("border", "1px black solid")
                         .style("padding", "5px")
-                       .text(function(d) { return d; });
+                       .text(function(d) { return d; });*/
             }); //dispatch textmodel
             
             /*      Sankey Diagram */
@@ -392,6 +394,7 @@ font-weight:bold;
             // adding a legend on top of the sankey
             function addlegend(){
             d3.select("#thelegend").remove()
+            /*
             var texte="This sankey shows the contents of the neural network from the input to the output. "
             var texte2="Each axis represents a layer of the network. "
             var texte3="Each color stands for a class, for instance the class 0 is in blue and it is the same for all the clusters of that class. Sometimes clusters are in grey. This means that they are shared between different classes."
@@ -399,7 +402,7 @@ font-weight:bold;
             var textlegend=texte+texte2+texte3+texte4
             d3.select('#legend').append('div').attr('id','thelegend')
                             .append('p')
-                            .text(textlegend);
+                            .text(textlegend);*/
             };
             
             // the function for moving the nodes
