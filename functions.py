@@ -450,7 +450,7 @@ def plot2D(name,layer,clusters_per_layer,classes_y,layer_num,pca_done=False) :
     
     class0 = plt.scatter([] , [], c='white',marker='o',edgecolors='orange')
     class1 = plt.scatter([] , [] , c='white',marker='o',edgecolors='black')
-    plt.legend((class0,class1), ("class 0", "class 1"),loc='upper left')
+    plt.legend((class0,class1), ("class 0", "class 1"),loc='lower right')
 
     bi_x,bs_x,min_y,max_y = line_points(pca_data,classes_y)
     x1 = (bi_x + bs_x)/2
