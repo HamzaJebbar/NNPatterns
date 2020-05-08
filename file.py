@@ -44,27 +44,27 @@ VTlayers, VTy = makes_Layers("VTmnist_64_32_16_/VTmnist_l1_64_l2_32_l3_16_.csv")
 
 clusters,models = p.kmModel(layers,5)
 pourcentages_mnist = pourcentages(clusters,y)
+# print(pourcentages_mnist)
 clusters_layers = elimination(pourcentages_mnist,10)
-
 tab,nodes = signatures_clusters(clusters,clusters_layers,y)
-plot2D_on_all_layers("mnist",layers,clusters,y)
+# plot2D_on_all_layers("mnist",layers,clusters,y)
 
-## VTmnist
+# ## VTmnist
 
 VTclusters= p.kmPredict(VTlayers,models)
 VTpourcentages_mnist = pourcentages(VTclusters,VTy)
 VTclusters_layers = elimination(VTpourcentages_mnist,5)
 
-VT_tab,VT_nodes = signatures_clusters(VTclusters,VTclusters_layers,VTy,True)
-plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
+VT_tab,VT_nodes = signatures_clusters(VTclusters,VTclusters_layers,VTy,VT=True)
+# plot2D_on_all_layers("VTmnist",VTlayers,VTclusters,VTy)
 
-# Generating JSON file
+# # Generating JSON file
 with open ("static/mnist.json","w") as f:
 	json.dump({"links":tab,"nodes":nodes},f)
 with open ("static/VTmnist.json","w") as f:
  	json.dump({"links":VT_tab,"nodes":VT_nodes},f)
 
-# Lunching Flask server
+# # Lunching Flask server
 app = Flask(__name__)
 app.static_url_path='/static'
 
