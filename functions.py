@@ -302,10 +302,36 @@ def shared_clusters(clusters_classes) :
                         shared_clust[k].append(cluster)
     return shared_clust
 
+# def clusters_class(clusters,pourcentages):
+
+#     for i in range(len(clusters)):
+#         clusters[i]=list(set(clusters[i]))
+#     for i in range(len(clusters)):
+#         for j in range(len(clusters[i])):
+#             clusters[i][j]=str(clusters[i][j])
+#     clust_tab = []
+#     for l in range(len(clusters)):
+#         clust_dic = {}
+#         for clust in clusters[l]:
+#             if clust not in clust_dic:
+#                 clust_dic[clust]=["0",0]
+#             for cla in pourcentages[l]:
+#                 if clust in pourcentages[l][cla]:
+#                     if pourcentages[l][cla][clust]>=clust_dic[clust][1]:
+#                         clust_dic[clust] = [cla,pourcentages[l][cla][clust]]
+#             clust_dic[clust]=clust_dic[clust][0]
+#         clust_tab.append(clust_dic)
+#     return clust_tab
+
+
 ## Generate the JSON file required by html page
 def signatures_clusters(clusters,clusters_classes,y,VT=False) :
+    print(VT)
     classes = list(clusters_classes.keys())
     shared_c = shared_clusters(clusters_classes)
+    s_c_p = []
+    s_c = []
+    # print(pg_clusters)
     tab = []
     nodes = []
     tab_nodes= []
@@ -338,9 +364,18 @@ def signatures_clusters(clusters,clusters_classes,y,VT=False) :
             if VT : 
                 y_vt = "C11"
             else :
-                y_vt = "C"+str(y[i])
+                y_vt = "C"+ str(y[i])
+            if VT==False or VT:
+                if [s,c,str(y[i])] not in s_c:
+                    s_c.append([s,c,str(y[i])])
+                    s_c_p.append([s,c,str(y[i]),1])
+                else:
+                    for e in s_c_p:
+                        if e[0]==s and e[1]==c and e[2]==str(y[i]):
+                            e[3]+=1
             while k < len(tab):
                 if tab[k]["source"]==s and tab[k]["target"] == c:
+
                     tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1)),"numclass":y_vt})
                     break
                 k+=1
@@ -357,10 +392,10 @@ def signatures_clusters(clusters,clusters_classes,y,VT=False) :
         if s not in tab_nodes:
             tab_nodes.append(s)
             nodes.append({"name":s,"numclass":numclass,"shared":shared})
-        if VT : 
-            y_vt = "C11"
-        else :
-            y_vt = "C"+str(y[i])
+        # if VT : 
+        #     y_vt = "C11"
+        # else :
+        y_vt = "C"+str(y[i])
         while k < len(tab):
             if tab[k]["source"]==s and tab[k]["target"] == c:
                 tab[k].update({"source":s,"target":c,"value":str(((int)(tab[k]["value"])+1)),"numclass":y_vt})
@@ -371,6 +406,15 @@ def signatures_clusters(clusters,clusters_classes,y,VT=False) :
         signature += '\n'
     for t in classes:
         nodes.append({"name":t,"numclass":"C"+str(t),"shared":"false"})
+    if VT==False or VT:
+        s_c_p = sorted(s_c_p,key=lambda x:x[3])
+        for [s,c,y,p] in s_c_p:
+            k=0
+            while k<len(tab):
+                if tab[k]["source"]==s and tab[k]["target"] == c:
+                    tab[k]["numclass"]="C"+y
+                    break
+                k+=1
     return tab,nodes
 
 ## Plot Functions
