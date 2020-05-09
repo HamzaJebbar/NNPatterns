@@ -326,7 +326,6 @@ def shared_clusters(clusters_classes) :
 
 ## Generate the JSON file required by html page
 def signatures_clusters(clusters,clusters_classes,y,VT=False) :
-    print(VT)
     classes = list(clusters_classes.keys())
     shared_c = shared_clusters(clusters_classes)
     s_c_p = []
