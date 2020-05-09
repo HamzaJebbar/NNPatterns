@@ -192,6 +192,54 @@ def makes_Layers(filename) :
         layers.append(layer)
         i+=2
     return layers,y
+
+''' ## NO LONGER USED ##: Levenshtein distance
+def distance (sig1,sig2) : # special sig1 == sig2
+    dist = [[0 for x in range(len(sig1))] for x in range(len(sig2))]
+    for x in range(len(sig1)) :
+        if x == 0 :
+            if sig1[x] == sig2[x] : dist[x][x] = 0
+            else : dist[x][x] = 1
+        else :
+            c = 0 
+            while c < x :
+                if sig1[x] == sig2[c] : 
+                    if c == 0 :
+                        dist[c][x] = x
+                    else : 
+                        dist[c][x] = dist[c-1][x-1] 
+                else :
+                    if c == 0 :
+                        dist[c][x] = min(x , x+1 , dist[c][x-1]) + 1 
+                    else :
+                        dist[c][x] = min(dist[c-1][x],dist[c][x-1],dist[c-1][x-1]) + 1
+                if sig1[c] == sig2[x] : 
+                    if c == 0 :
+                        dist[x][c] = x
+                    else : 
+                        dist[x][c] = dist[x-1][c-1]
+                else : 
+                    if c == 0 :
+                        dist[x][c] = min(x , x+1 , dist[x-1][c]) + 1 
+                    else :
+                        dist[x][c] = min(dist[x-1][c],dist[x][c-1],dist[x-1][c-1]) + 1
+                c += 1
+            if (sig1[x] == sig2[x]) :
+                dist[x][x] = dist[x-1][x-1]
+            else : 
+                dist[x][x] = min(dist[x][x-1],dist[x-1][x],dist[x-1][x-1]) + 1
+    return dist[x][x]
+
+## NO LONGER USED ##: Matrix of distances
+def matrice_distances(layer) :
+    matrice = []
+    for x in range(len(layer)) : 
+        mat =[]
+        for y in range(len(layer)) :
+            mat.append(distance(layer[x],layer[y]))
+        matrice.append(mat)
+    return matrice
+
 '''
 ## Percentage of every cluster in one layer
 def pourcentages_inter (clusters_of_layer,y) :
