@@ -28,4 +28,4 @@ https://github.com/HamzaJebbar/NNPatterns
 
 
 
-Un rapport de ce projet est déposé dans github.
+Un rapport de ce projet est déposé dans le dossier Rapport.
