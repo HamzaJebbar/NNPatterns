@@ -1,6 +1,6 @@
 Auteurs:
-Younes JEBBAR
-Hamza JEBBAR
+Younes JEBBAR;
+Hamza JEBBAR;
 Doha CHEMAOU
 
 Description de l'application:
@@ -9,14 +9,14 @@ Notre application porte sur les réseaux de neurones. Elle consiste à découvri
 
 
 numeros de versions :
-python3.7
-keras 2.3.1
-numpy 1.18.1
-pandas 1.0.1
-sklearn 0.22.1
-tensorflow 2.1.0
-matplotlib 3.1.3
-flask 1.1.2
+python3.7;
+keras 2.3.1;
+numpy 1.18.1;
+pandas 1.0.1;
+sklearn 0.22.1;
+tensorflow 2.1.0;
+matplotlib 3.1.3;
+flask 1.1.2;
 json 2.0.9
 
 
